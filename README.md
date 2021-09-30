@@ -1,2 +1,3 @@
-# fsw-autocoder
-generate random flight software of varying quality
+# Flight Software Autocoder
+
+Generate random flight software of varying quality
