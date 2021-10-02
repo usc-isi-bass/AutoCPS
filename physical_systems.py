@@ -1,6 +1,13 @@
 # This class contains all the information about the physical object needed for
 # generating the controller software
 
+# Octants are organized in [x, y, z] form, with each variable being either -1 or
+# 1. For example, the following describes one half of the space where z=1:
+#
+#  [-1, 1, 1] | [ 1, 1, 1]
+# ------------+------------
+#  [-1,-1, 1] | [ 1,-1, 1]
+
 import random
 from decimal import Decimal
 
@@ -48,7 +55,7 @@ class PhysicalSystem:
     type = 'rover'
 
     # Constructor
-    def PhysicalSystem(self, system_type='rover'):
+    def __init__(self, system_type='rover'):
         self.type = system_type
 
     # Randomly generate dimensions based on limits
@@ -60,31 +67,38 @@ class PhysicalSystem:
         self.dimensions = [x, y, z]
 
     # Choose to add a sensor in a random octant of the space
-    def add_sensor(self, octant=[0, 0]):
+    def add_sensor(self, octant=[0, 0, 0]):
         new_location = [Decimal(), Decimal(), Decimal()]
         self.sensor_locations.push(new_location)
 
 
 # Class with rover-specific attributes
 class Rover(PhysicalSystem):
-    pass
+    # Only control surface for rovers are motors
+    motor_locations = []
 
+    # Add a new motor in one of the octants
+    def add_motor(self, octant=[0, 0, 0]):
+        x = Decimal()
+        y = Decimal()
+        z = Decimal()
+        self.motor_locations.append([x, y, z])
 
-# Class with plane-specific attributes
+# TODO: Class with plane-specific attributes
 class Plane(PhysicalSystem):
     pass
 
 
-# Class with helicopter-specific attributes
+# TODO: Class with helicopter-specific attributes
 class Helicopter(PhysicalSystem):
     pass
 
 
-# Class with missile-specific attributes
+# TODO: Class with missile-specific attributes
 class Missile(PhysicalSystem):
     pass
 
 
-# Class with submarine-specific attributes
+# TODO: Class with submarine-specific attributes
 class Submarine(PhysicalSystem):
     pass
