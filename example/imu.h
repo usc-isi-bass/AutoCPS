@@ -12,8 +12,18 @@ struct IMUOutput {
   Quarternion orientation;
 };
 
-// Recieve data from a sensor and
-void data_recieve_sensor(void );
+// IMU internal datatype
+struct IMUInternalData {
+
+};
+
+// Recieve a quarternion from AXI stream
+Quarternion receive_axi_stream() {
+
+}
+
+// Recieve data from a sensor and feed it into the calculations
+void data_recieve_sensor();
 
 // Main loop of IMU unit, continuously runs when called by startup script
 void imu_loop();
