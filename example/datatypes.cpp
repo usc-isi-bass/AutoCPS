@@ -24,7 +24,7 @@ void AXIToken::input_quart(Quarternion q) {
 
   this->type = "Quarternion";
 }
-  
+
 Vec2D AXIToken::output_vec2d() {
   if (this->type != "Vec2D") {
     std::string err_msg = "AXIToken: Expected Vec2D but got " + this->type;
@@ -62,4 +62,16 @@ Quarternion AXIToken::output_quart() {
   ret.c = this->c;
   ret.d = this->d;
   return ret;
+}
+
+void AXIStream::push_back() {
+
+}
+
+void AXIStream::pop_out() {
+
+}
+
+void AXIStream::size() {
+
 }

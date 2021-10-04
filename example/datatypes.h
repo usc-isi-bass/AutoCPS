@@ -1,7 +1,7 @@
 #ifndef DATATYPES_H
 #define DATATYPES_H
 
-#include <deque>
+#include <queue>
 #include <string>
 
 // Contains definitons and mutators for commonly used datatypes
@@ -48,9 +48,12 @@ public:
 
 class AXIStream {
 private:
-  std::deque<AXIToken> buffer;
+  std::queue<AXIToken> buffer;
 public:
-
+  void push_back();
+  void pop_out();
+  void size();
 };
 
 #endif /*DATATYPES_H*/
+
