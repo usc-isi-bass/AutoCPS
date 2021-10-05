@@ -64,12 +64,20 @@ Quarternion AXIToken::output_quart() {
   return ret;
 }
 
-void AXIStream::push_back() {
-
+void AXIStream::push(AXIToken t) {
+  buffer.push(t);
 }
 
-void AXIStream::pop_out() {
+AXIToken AXIStream::get() {
+  AXIToken ret;
+  ret.type = "empty";
 
+  if (buffer.size() != 0) {
+    ret = buffer.front();
+    buffer.pop();
+  }
+
+  return ret;
 }
 
 void AXIStream::size() {

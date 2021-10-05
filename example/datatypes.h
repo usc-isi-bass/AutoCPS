@@ -35,8 +35,8 @@ private:
   double b;
   double c;
   double d;
-  std::string type;
 public:
+  std::string type;
   void input_vec2d(Vec2D v);
   void input_vec3d(Vec3D v);
   void input_quart(Quarternion q);
@@ -50,8 +50,8 @@ class AXIStream {
 private:
   std::queue<AXIToken> buffer;
 public:
-  void push_back();
-  void pop_out();
+  void push(AXIToken t);
+  AXIToken get();
   void size();
 };
 

@@ -10,6 +10,9 @@ add_library(datatypes datatypes.cpp)
 add_library(imu imu.cpp)
 target_link_libraries(imu datatypes)
 
+add_library(stub fsw_stub.cpp)
+target_link_libraries(stub imu datatypes)
+
 add_executable(fsw main.cpp)
-target_link_libraries(fsw imu datatypes)
+target_link_libraries(fsw imu datatypes stub pthread)
 

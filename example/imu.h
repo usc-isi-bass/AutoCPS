@@ -5,6 +5,7 @@
 
 #include "datatypes.h"
 #include <deque>
+#include <memory>
 
 // Final output of IMU
 struct IMUData {
@@ -23,12 +24,12 @@ struct IMUInputData {
 };
 
 // Recieve a quarternion from AXI stream
-Quarternion receive_axi_stream();
+Quarternion imu_receive_axi_stream();
 
 // Recieve data from a sensor and feed it into the calculations
-IMUInputData data_recieve_sensors();
+IMUInputData imu_data_recieve_sensors();
 
 // Main loop of IMU unit, continuously runs when called by startup script
-void imu_loop(AXIStream &input_st, AXIStream &output_st);
+void imu_main_loop(std::shared_ptr<AXIStream> input, std::shared_ptr<AXIStream> output);
 
 #endif /*IMU_H*/
