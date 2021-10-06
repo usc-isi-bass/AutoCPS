@@ -1,21 +1,32 @@
 #include <iostream>
 #include <memory>
-#include <thread>
 
 #include "imu.h"
+#include "fsw_stub.h"
 
 int main(int argc, char const *argv[])
 {
+  // Simulated AXI streams
   std::shared_ptr<AXIStream> imu_input_st(new AXIStream());
   std::shared_ptr<AXIStream> imu_to_actuator_st(new AXIStream());
 
-  // Start IMU module
-  std::thread imu_loop(imu_main_loop,
-                       std::ref(imu_input_st),
-                       std::ref(imu_to_actuator_st));
+  // TODO: Initialization
+  
+  // Main control loop
+  while(true) {
+    // Generate positioning data and send data to IMU
+    imu_stub_data_send(imu_stub_data_recieve_sensors(), imu_input_st);
+    // Run one iteration of IMU module
+    imu_main_loop(imu_input_st, imu_to_actuator_st);
+    // Query autopilot
 
-  // Should never return until stopped
-  imu_loop.join();
+    // Run one iteration of actuator module
+
+    // Run one iteration of control dynamics module
+
+    // Modify control surfaces accordingly
+
+  }
 
   return 0;
 }

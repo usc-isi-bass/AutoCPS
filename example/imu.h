@@ -11,6 +11,7 @@
 struct IMUData {
   Quarternion linear_accel;
   Quarternion angular_accel;
+  Quarternion location;
   Quarternion orientation;
 };
 
@@ -22,12 +23,6 @@ struct IMUInputData {
   // Simulated inertial navigation system
   Vec3D rotational, linear;
 };
-
-// Recieve a quarternion from AXI stream
-Quarternion imu_receive_axi_stream();
-
-// Recieve data from a sensor and feed it into the calculations
-IMUInputData imu_data_recieve_sensors();
 
 // Main loop of IMU unit, continuously runs when called by startup script
 void imu_main_loop(std::shared_ptr<AXIStream> input, std::shared_ptr<AXIStream> output);

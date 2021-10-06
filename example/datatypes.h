@@ -37,10 +37,13 @@ private:
   double d;
 public:
   std::string type;
+
+  void input_double(double v);
   void input_vec2d(Vec2D v);
   void input_vec3d(Vec3D v);
   void input_quart(Quarternion q);
   
+  double output_double();
   Vec2D output_vec2d();
   Vec3D output_vec3d();
   Quarternion output_quart();
@@ -52,8 +55,10 @@ private:
 public:
   void push(AXIToken t);
   AXIToken get();
-  void size();
 };
+
+// Convert 3D vector to Quarternion
+inline Quarternion convert_to_quarternion(Vec3D v);
 
 #endif /*DATATYPES_H*/
 

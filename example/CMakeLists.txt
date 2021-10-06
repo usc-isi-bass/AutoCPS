@@ -15,4 +15,3 @@ target_link_libraries(stub imu datatypes)
 
 add_executable(fsw main.cpp)
 target_link_libraries(fsw imu datatypes stub pthread)
-
