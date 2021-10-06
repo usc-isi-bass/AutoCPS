@@ -8,10 +8,10 @@
 #include <memory>
 
 // Final output of IMU
-struct IMUData {
+struct IMUOutputData {
   Quarternion linear_accel;
   Quarternion angular_accel;
-  Quarternion location;
+  Vec3D location;
   Quarternion orientation;
 };
 
@@ -25,6 +25,7 @@ struct IMUInputData {
 };
 
 // Main loop of IMU unit, continuously runs when called by startup script
-void imu_main_loop(std::shared_ptr<AXIStream> input, std::shared_ptr<AXIStream> output);
+void imu_main_loop(std::shared_ptr<AXIStream> input_st,
+                   std::shared_ptr<AXIStream> output_st);
 
 #endif /*IMU_H*/

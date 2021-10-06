@@ -97,7 +97,7 @@ AXIToken AXIStream::get() {
   return ret;
 }
 
-inline Quarternion convert_to_quarternion(Vec3D v) {
+Quarternion convert_to_quarternion(Vec3D v) {
   Quarternion ret;
 
   double c1 = cos(v.z * 0.5);

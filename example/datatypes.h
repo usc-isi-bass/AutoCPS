@@ -58,7 +58,7 @@ public:
 };
 
 // Convert 3D vector to Quarternion
-inline Quarternion convert_to_quarternion(Vec3D v);
+Quarternion convert_to_quarternion(Vec3D v);
 
 #endif /*DATATYPES_H*/
 
