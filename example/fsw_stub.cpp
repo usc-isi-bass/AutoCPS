@@ -28,6 +28,34 @@ IMUInputData imu_stub_data_recieve_sensors() {
 // Stubbed function to send data to the IMU
 void imu_stub_data_send(IMUInputData input_data, shared_ptr<AXIStream> input_stream) {
   AXIToken input_token;
+  Vec3D input_vec3d;
 
+  input_vec3d = input_data.linear;
+  input_token.input_vec3d(input_vec3d);
+  input_stream->push(input_token);
+
+  input_vec3d = input_data.rotational;
+  input_token.input_vec3d(input_vec3d);
+  input_stream->push(input_token);
+
+  input_vec3d = input_data.gps_satellite_a;
+  input_token.input_vec3d(input_vec3d);
+  input_stream->push(input_token);
+
+  input_vec3d = input_data.gps_satellite_b;
+  input_token.input_vec3d(input_vec3d);
+  input_stream->push(input_token);
+
+  input_vec3d = input_data.gps_satellite_c;
+  input_token.input_vec3d(input_vec3d);
+  input_stream->push(input_token);
+
+  input_token.input_double(input_data.gps_distance_a);
+  input_stream->push(input_token);
+
+  input_token.input_double(input_data.gps_distance_b);
+  input_stream->push(input_token);
+
+  input_token.input_double(input_data.gps_distance_c);
   input_stream->push(input_token);
 }

@@ -7,13 +7,29 @@ inline IMUInputData imu_receive_axi_stream() {
   IMUInputData input_data;
   AXIToken input;
 
+  // Recieve linear velocity
+  input = imu_input_st->get();
+  input_data.linear = input.output_vec3d();
+
   // Recieve rotational velocity
   input = imu_input_st->get();
   input_data.rotational = input.output_vec3d();
 
-  // Recieve linear velocity
+  // Recieve GPS satellite locations
   input = imu_input_st->get();
-  input_data.linear = input.output_vec3d();
+  input_data.gps_satellite_a = input.output_vec3d();
+  input = imu_input_st->get();
+  input_data.gps_satellite_b = input.output_vec3d();
+  input = imu_input_st->get();
+  input_data.gps_satellite_c = input.output_vec3d();
+
+  // Recieve GPS satellite distances
+  input = imu_input_st->get();
+  input_data.gps_distance_a = input.output_double();
+  input = imu_input_st->get();
+  input_data.gps_distance_b = input.output_double();
+  input = imu_input_st->get();
+  input_data.gps_distance_c = input.output_double();
 
   return input_data;
 }
@@ -35,11 +51,8 @@ void imu_main_loop(std::shared_ptr<AXIStream> input, std::shared_ptr<AXIStream> 
   imu_input_st = input;
   imu_output_st = output;
 
-  // Run loop forever
-  while (true) {
-    // Recieve data from the IMU
-    IMUInputData input_data = imu_receive_axi_stream();
-    // Calculate 
+  // Recieve data from the IMU
+  IMUInputData input_data = imu_receive_axi_stream();
+  // Calculate 
     
-  }
 }
