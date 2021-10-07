@@ -1,3 +1,3 @@
 # FakeFSW
 
-An example template of a fake FSW that fsw-autocoder will generate
+Template of the FSW that fsw-autocoder will modify
