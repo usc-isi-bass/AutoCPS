@@ -7,26 +7,30 @@
 
 #include "datatypes.h"
 
-enum SystemType = {ROVER, PLANE, ROCKET, HELICOPTER};
+enum SystemType {ROVER, PLANE, ROCKET, HELICOPTER};
 
 // Global
-#define MASS         125.0
-#define DIMENSIONS   {0.0, 0.0, 0.0}
+const double mass = 125.0;
+const double dimensions[3] = {0.0, 0.0, 0.0};
+const SystemType fsw_system = ROVER;
 
 // Plane-only
-#define ENGINES      {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}}
+#define NUM_ENGINES 2
+const double engines[NUM_ENGINES][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
 // Rover-only
-#define MOTORS       {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}}
-#define MOTOR_SPEEDS {0.0, 0.0}
+#define NUM_MOTORS 2
+const double motors[NUM_ENGINES][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
+const double motor_max_speeds[NUM_ENGINES] = {0.0, 0.0};
 
 // Rocket-only
-#define I_SP         100.0
-#define MAX_FUEL     100.0
-#define BURN_RATE    100.0
+const double i_sp = 100.0;
+const double max_fuel = 100.0;
+const double mass_flow_rate = 10.0;
 
 // Helicopter-only
-#define PROPELLERS   {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}}
-#define PROP_THRUSTS {0.0, 0.0}
+#define NUM_PROPS 2
+const double PROPELLERS[NUM_PROPS][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
+const double PROP_THRUSTS[NUM_PROPS] = {0.0, 0.0};
 
 #endif

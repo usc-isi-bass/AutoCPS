@@ -7,8 +7,7 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-  create_waypoints("input.txt");
-  cout << get_waypoint().z << endl;
+  pos_create_waypoints("input.txt");
 
   return 0;
 }
