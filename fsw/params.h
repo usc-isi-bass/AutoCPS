@@ -14,6 +14,10 @@ const double mass = 125.0;
 const double dimensions[3] = {0.0, 0.0, 0.0};
 const SystemType fsw_system = ROVER;
 
+#define ATT_MAX_LEAN_ANGLE 100
+#define ATT_MAX_ROTATION_RATE 100
+#define ATT_MAX_CLIMB_RATE 100
+
 // Plane-only
 #define NUM_ENGINES 2
 const double engines[NUM_ENGINES][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};

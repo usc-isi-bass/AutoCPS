@@ -48,11 +48,15 @@ void pos_remove_waypoint() {
 
 Vec3D pos_get_next_location() {
   Vec3D target_location = pos_get_waypoint();
+  Vec3D ret;
 
   if (pos_use_curved_waypoints) {
     // Set new waypoint based on derivative
     double max_speed = stub_estimate_max_speed();
-    return pos_autocode_logistic_function_derivative() * max_speed;
+    ret.x = pos_autocode_logistic_function_derivative(0.0f) * max_speed;
+    ret.y = pos_autocode_logistic_function_derivative(0.0f) * max_speed;
+    ret.z = pos_autocode_logistic_function_derivative(0.0f) * max_speed;
+    return ret;
   } else {
     // For straight-line navigation, just send in next waypoint
     return target_location;
