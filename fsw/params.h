@@ -4,6 +4,9 @@
 
 #ifndef PARAMS_H
 #define PARAMS_H
+#define _USE_MATH_DEFINES
+
+#include<cmath>
 
 #include "datatypes.h"
 
@@ -36,5 +39,6 @@ const double mass_flow_rate = 10.0;
 #define NUM_PROPS 2
 const double PROPELLERS[NUM_PROPS][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 const double PROP_THRUSTS[NUM_PROPS] = {0.0, 0.0};
+const double PROP_MAX_ANGLE = 0.133f * M_PI;
 
 #endif
