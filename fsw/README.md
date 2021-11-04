@@ -12,15 +12,15 @@ adapted to various different architectures.
 +-----------------------+
 |                       |
 |   +---------+    +----v----+
-|   | seq     +----> autonav +---------+
-|   +----+----+    +---------+         |
-|        |                             |
-|        |                        +----v-----+    +----------+   +----------+
+|   | seq     +----> autonav +--------------------------+
+|   +----+----+    +---------+                          |
+|        |                                              |
+|        |                        +----------+    +-----v----+   +----------+
 |        +--------------+---------> position +----> attitude +---> servo    |
 |                       |         +----^-----+    +----------+   +----------+
 +-----------------------+              |
 |                       |              +--------+
-|                       |              |        | 
+|                       |              |        |
 |   +---------+    +----+----+    +----+----+   |
 |   | imu     +----> kalman  +----> ivp     |   |
 |   +---------+    +----^----+    +----^----+   |
@@ -67,7 +67,13 @@ should not. This should be a stubbed module for our use case.
 ### kalman
 
 The `kalman` module will provide a Kalman filter to even out the data from
-`sensor` in case any of the sensors fail.
+`sensor` in case any of the sensors fail. The design of this module can also
+differ based on the model used.
+
+**Primary variations:**
+
+* Initial state estimate
+* Initial state covariance estimate
 
 ### autonav
 
@@ -119,25 +125,57 @@ as input the obstacles or the drift, as well as the next waypoint that needs to
 be met. It will then present an offset to `position` which will take this
 adjustment into account during the calculation.
 
+**Primary variations:**
+
+* *TODO: find stuff here*
+
 ### ivp
 
 Often, the data from the sensors are in the frame of reference of the sensor and
-not that of the entire system. The inertial vector propagation module will
-convert input vectors into the correct reference frame as needed.
+not that of the entire system. The `ivp` module will use inertial vector
+propagation to convert input vectors into the correct reference frame as needed.
 
-### nav
-
-The nav module unifies all inputs from both the controller (seq and autonav) as well
-as the input data from the ivp and kalman modules. It uses this data
+Since there are only so many ways to convert a vector from one frame to another,
+this can also be fixed between the different versions.
 
 ### position
 
+The `position` module unifies all inputs from the controller (seq) as well as
+the input data from the ivp and kalman modules. It uses this data to select the
+next waypoint to move to.
 
+The physical system will have different limits to the space of possible
+waypoints that could be chosen. For example, a plane needs a minimum thrust to
+ensure that the plane won't stall, and a rover can't go through very steep
+hills. These limits can be written as part of the configuration file and checked
+with inlined functions.
+
+**Primary variations:**
+
+* Different S-curve functions to do navigation with
+* Different heuristics to choose the waypoints from (e.g. must we hit the
+waypoints or just pass by them?)
+* Limits on the behavior of the physical system
 
 ### attitude
 
+The `attitude` module gets inputs from `position` and `autonav`. It uses this
+data to control the next direction and heading for the physical system. This is
+the most significant module for variations that can be added.
 
+**Primary variations:**
+
+* Limits on the available angles of rotation / roll-pitch-yaw (extension of the
+same limits in `position`)
 
 ### servo
 
-The servo module contains code for generating a 
+The `servo` module contains code to interface with the control surfaces of the
+physical system. This requires knowledge of the design of the physical system.
+Communication to actual servos from this module should be stubbed for our use
+case.
+
+**Primary variations:**
+
+* Different sets/locations of servos/hydraulics/motors
+* Each servo/hydraulics/motors providing a different amount of force
