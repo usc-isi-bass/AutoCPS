@@ -5,8 +5,9 @@ Template of the FSW that fsw-autocoder will modify
 ## Base architecture
 
 We divide the flight software into 10 modules that must be present on every
-vehicle controller, no matter the type. Each module can be specifically
-adapted to various different architectures.
+vehicle controller no matter the type of physical system it is. Each module can
+be specifically adapted to their system, though all have some core functions
+that can be reused.
 
 ```text
 +-----------------------+
