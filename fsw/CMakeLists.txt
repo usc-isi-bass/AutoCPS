@@ -14,8 +14,26 @@ add_library(datatypes datatypes.cpp)
 add_library(stub stub.cpp)
 target_link_libraries(stub datatypes)
 
+add_library(seq seq.cpp)
+target_link_libraries(seq stub datatypes)
+
+add_library(imu imu.cpp)
+target_link_libraries(imu stub datatypes)
+
+add_library(sensor sensor.cpp)
+target_link_libraries(sensor stub datatypes)
+
+add_library(autonav autonav.cpp)
+target_link_libraries(autonav seq)
+
+add_library(kalman kalman.cpp)
+target_link_libraries(kalman imu sensor)
+
+add_library(ivp ivp.cpp)
+target_link_libraries(ivp kalman sensor)
+
 add_library(pos_ctrl pos_ctrl.cpp)
-target_link_libraries(pos_ctrl datatypes stub)
+target_link_libraries(pos_ctrl seq ivp kalman autonav sensor)
 
 add_library(att_ctrl att_ctrl.cpp)
 target_link_libraries(att_ctrl datatypes pos_ctrl)

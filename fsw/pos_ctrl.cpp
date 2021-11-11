@@ -1,59 +1,30 @@
 #include "pos_ctrl.h"
 
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
 #include "autocode.h"
 #include "stub.h"
 
-using namespace std;
+#include "ivp.h"
+#include "kalman.h"
+#include "sensor.h"
+#include "seq.h"
 
-// Waypoint queue
-std::queue<Vec3D> pos_waypoints;
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+
+using namespace std;
 
 // Whether to use curved waypoint navigation
 bool pos_use_s_curve = false;
-
-// Push a new set of waypoints in from a file
-// This can simulate an autopilot or contorller input
-void pos_create_waypoints(const std::string& filename) {
-  ifstream input_file(filename);
-  std::string line;
-  Vec3D input_waypoint;
-
-  // Loop through and add all waypoints into input
-  while (input_file.good()) {
-    getline(input_file, line);
-    stringstream input_stream(line);
-
-    // Get x, y, z
-    input_stream >> input_waypoint.x;
-    input_stream >> input_waypoint.y;
-    input_stream >> input_waypoint.z;
-
-    // Add waypoint to the queue
-    pos_waypoints.push(input_waypoint);
-  }
-}
 
 // Set whether to use curved waypoint navigation
 void pos_set_curved_waypoints(bool use_curved_waypoints) {
   pos_use_s_curve = use_curved_waypoints;
 }
 
-// Get the last waypoint
-Vec3D pos_get_waypoint() {
-  return pos_waypoints.front();
-}
-
-// Pop the last waypoint since we reached it already
-void pos_remove_waypoint() {
-  pos_waypoints.pop();
-}
-
 // Get the next velocity heading to take
 Vec3D pos_get_next_location(Vec3D current_location) {
-  Vec3D target_location = pos_get_waypoint();
+  Vec3D target_location = seq_get_waypoint();
   Vec3D ret;
 
   if (pos_use_s_curve) {

@@ -179,4 +179,4 @@ case.
 **Primary variations:**
 
 * Different sets/locations of servos/hydraulics/motors
-* Each servo/hydraulics/motors providing a different amount of force
+* Each servo/hydraulics/motors providing a different amount + scaling of force
