@@ -1,6 +1,7 @@
 #include "datatypes.h"
 
-#include <cmath>
+#include "SpiceCK.h"
+#include "SpiceZpr.h"
 
 Vec2D Vec2D::operator-(Vec2D& a) {
   Vec2D ret;
@@ -23,18 +24,17 @@ Vec3D Vec3D::operator-(Vec3D& a) {
 
 Quaternion vec2quat(Vec3D input) {
   Quaternion ret;
+  SpiceDouble rotation_matrix[3][3], quart[4];
 
-  double cy = cos(input.z * 0.5f);
-  double sy = sin(input.z * 0.5f);
-  double cp = cos(input.y * 0.5f);
-  double sp = sin(input.y * 0.5f);
-  double cr = cos(input.z * 0.5f);
-  double sr = sin(input.z * 0.5f);
+  // Transform Euler angle into rotation matrix, and rotation matrix into
+  // quaternion
+  eul2m_c(ret.z, ret.y, ret.z, 2, 1, 0, rotation_matrix);
+  m2q_c(rotation_matrix, quart);
 
-  ret.w = cr * cp * cy + sr * sp * sy;
-  ret.x = sr * cp * cy - cr * sp * sy;
-  ret.y = cr * sp * cy + sr * cp * sy;
-  ret.z = cr * cp * sy - sr * sp * cy;
+  ret.w = quart[0];
+  ret.x = quart[1];
+  ret.y = quart[2];
+  ret.z = quart[3];
 
   return ret;
 }

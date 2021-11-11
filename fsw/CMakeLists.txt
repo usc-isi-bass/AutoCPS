@@ -1,11 +1,13 @@
 project(FakeFSW)
 cmake_minimum_required(VERSION 3.14)
 
-include("cspice/CMakeLists.txt")
-
 # We need link-time optimization so everything fits nicely in one binary
 # Also some functions can get inlined this way
 add_compile_options(-O3 -flto -msse2)
+
+# We need to build SPICE for some important functions
+include("cspice/CMakeLists.txt")
+include_directories("cspice/include")
 
 add_library(datatypes datatypes.cpp)
 target_link_libraries(datatypes cspice)
@@ -29,7 +31,7 @@ add_library(kalman kalman.cpp)
 target_link_libraries(kalman imu sensor)
 
 add_library(ivp ivp.cpp)
-target_link_libraries(ivp kalman sensor)
+target_link_libraries(ivp kalman sensor cspice)
 
 add_library(pos_ctrl pos_ctrl.cpp)
 target_link_libraries(pos_ctrl seq ivp kalman autonav sensor)
