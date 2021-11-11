@@ -1,15 +1,14 @@
 project(FakeFSW)
 cmake_minimum_required(VERSION 3.14)
 
-include_directories("../cspice/include")
-find_library(CSPICE NAMES cspice.a PATHS "../cspice/lib")
-find_library(CSUPPORT NAMES csupport.a PATHS "../cspice/lib")
+include("cspice/CMakeLists.txt")
 
 # We need link-time optimization so everything fits nicely in one binary
 # Also some functions can get inlined this way
 add_compile_options(-O3 -flto -msse2)
 
 add_library(datatypes datatypes.cpp)
+target_link_libraries(datatypes cspice)
 
 add_library(stub stub.cpp)
 target_link_libraries(stub datatypes)
