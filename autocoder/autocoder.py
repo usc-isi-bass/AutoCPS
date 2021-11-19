@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import argparse
+import os
+
 
 from physical_systems import PhysicalSystem
 
@@ -14,7 +16,7 @@ def main():
     args = parser.parse_args()
 
     # Generate physical system
-    physical_system = PhysicalSystem(args.vehicle_type[0]);
+    physical_system = PhysicalSystem(args.vehicle_type[0])
     physical_system.generate_dimensions()
 
     print(physical_system.dimensions)

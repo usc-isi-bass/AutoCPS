@@ -24,4 +24,6 @@ struct Quaternion {
 
 Quaternion vec2quat(Vec3D input);
 
+Vec3D quat2vec(Quaternion input);
+
 #endif

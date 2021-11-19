@@ -7,6 +7,6 @@
 void pos_set_curved_waypoints(bool use_curved_waypoints);
 
 // Calculate next waypoint to give to attitude control
-Vec3D seq_get_next_location();
+Vec3D pos_get_next_location();
 
 #endif

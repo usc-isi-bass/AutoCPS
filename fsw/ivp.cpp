@@ -1,7 +1,9 @@
 #include "ivp.h"
-#include "kalman.h"
-#include "sensor.h"
 
+#include "datatypes.h"
+#include "kalman.h"
+
+ReferenceFrame center_frame;
 
 // Get the translational transformation needed to go between these two frames 
 Vec3D sensor_pos_to_system_pos(Vec3D coordinate, ReferenceFrame sensor_frame,
@@ -21,10 +23,33 @@ Vec3D sensor_pos_to_system_pos(Vec3D coordinate, ReferenceFrame sensor_frame,
 }
 
 // Get the rotation transformation needed to go between these two frames 
-Quaternion sensor_rot_to_system_rot(Vec3D coordinate,
+Quaternion sensor_rot_to_system_rot(Quaternion coordinate,
                                     ReferenceFrame sensor_frame,
                                     ReferenceFrame system_frame) {
-  Quaternion ret;
+  Quaternion new_rot;
 
-  return ret;
+    
+
+  return new_rot;
+}
+
+Vec3D ivp_get_sensor_position(Sensor *sensor) {
+  SensorData sensor_data;
+
+  sensor_data = sensor_get_data(sensor);
+
+  return sensor_pos_to_system_pos(sensor_data.output_position,
+                                  sensor->sensor_frame,
+                                  center_frame);
+}
+
+Quaternion ivp_get_sensor_rotation(Sensor *sensor) {
+  SensorData sensor_data;
+  Quaternion sensor_rotation;
+
+  sensor_data = sensor_get_data(sensor);
+
+  return sensor_rot_to_system_rot(sensor_rotation,
+                                  sensor->sensor_frame,
+                                  center_frame);
 }

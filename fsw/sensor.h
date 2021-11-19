@@ -3,13 +3,23 @@
 
 #include "datatypes.h"
 
+// Struct to define an inertial reference frame
+struct ReferenceFrame {
+  Vec3D origin;
+  Vec3D axes;
+};
+
+// Basic datatype for a sensor
+struct SensorData {
+  Vec3D output_position;
+  Quaternion output_rotation;
+};
+
 // Basic datatype for a sensor
 struct Sensor {
-  Vec3D sensor_position;
-  Quaternion sensor_orientation;
-
-  Vec3D sensor_output_position;
-  Quaternion sensor_output_rotation;
+  ReferenceFrame sensor_frame;
 };
+
+SensorData sensor_get_data(Sensor *sensor);
 
 #endif
