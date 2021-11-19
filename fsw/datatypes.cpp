@@ -1,7 +1,6 @@
 #include "datatypes.h"
 
-#include "SpiceCK.h"
-#include "SpiceZpr.h"
+#include <cmath>
 
 Vec2D Vec2D::operator-(Vec2D& a) {
   Vec2D ret;
@@ -24,33 +23,46 @@ Vec3D Vec3D::operator-(Vec3D& a) {
 
 Quaternion vec2quat(Vec3D input) {
   Quaternion ret;
-  SpiceDouble rotation_matrix[3][3], quat[4];
+  double c1, c2, c3, s1, s2, s3;
 
-  // Transform Euler angle into rotation matrix, and rotation matrix into
-  // quaternion
-  eul2m_c(ret.z, ret.y, ret.z, 2, 1, 0, rotation_matrix);
-  m2q_c(rotation_matrix, quat);
+  c1 = cos(input.x / 2);
+  c2 = cos(input.y / 2);
+  c3 = cos(input.z / 2);
+  s1 = sin(input.x / 2);
+  s2 = sin(input.y / 2);
+  s3 = sin(input.z / 2);
 
-  ret.w = quat[0];
-  ret.x = quat[1];
-  ret.y = quat[2];
-  ret.z = quat[3];
+#ifdef ALTERNATIVE_VEC2QUAT
+  ret.w = sqrt(1.0f + (c1 * c2) + (c1 * c3) - (c1 * s2 * s3) + (c2 * c3)) / 2;
+  ret.x = ((c2 * s3) + (c1 * s3) + (s1 * s2 * c3)) / (4.0f * ret.w);
+  ret.y = ((s1 * c2) + (s1 * c3) + (c1 * s2 * s3)) / (4.0f * ret.w);
+  ret.z = (((-1.0f * s1)) * s3) + (c1 * s2 *c3) * s2) / (4.0f * ret.w);
+#else
+  ret.w = (c1 * c2 * c3) - (s1 * s2 * s3);
+  ret.x = (s1 * s2 * c3) - (c1 * c2 * s3);
+  ret.y = (s1 * c2 * c3) - (c1 * s2 * s3);
+  ret.z = (c1 * s2 * c3) - (s1 * c2 * s3);
+#endif
 
   return ret;
 }
 
 Vec3D quat2vec(Quaternion input) {
   Vec3D ret;
-  SpiceDouble rotation_matrix[3][3], quat[4];
+  double t0, t1, t2, t3, t4;
 
-  // Transform quaternion into rotation matrix, and rotation matrix into
-  // euler angles
-  m2q_c(rotation_matrix, quat);
-  eul2m_c(ret.z, ret.y, ret.z, 2, 1, 0, rotation_matrix);
+  t0 = +2.0f * (input.w * input.x + input.y * input.z);
+  t1 = +1.0f - 2.0f * (input.x * input.x + input.y * input.y);
+  ret.x = atan2(t0, t1);
 
-  ret.x = quat[1];
-  ret.y = quat[2];
-  ret.z = quat[3];
+  t2 = 2.0f * (input.w * input.y - input.z * input.x);
+  t2 = (t2 > 1.0f) ? 1.0f : t2;
+  t2 = (t2 < -1.0f) ? -1.0f : t2;
+  ret.y = asin(t2);
+
+  t3 = 2.0f * (input.w * input.z + input.x * input.y);
+  t4 = 1.0f - 2.0f * (input.y * input.y + input.z * input.z);
+  ret.z = atan2(t3, t4);
 
   return ret;
 }
