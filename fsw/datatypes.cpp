@@ -11,6 +11,16 @@ Vec2D Vec2D::operator-(Vec2D& a) {
   return ret;
 }
 
+Vec3D Vec3D::operator+(Vec3D& a) {
+  Vec3D ret;
+
+  ret.x = this->x + a.x;
+  ret.y = this->y + a.y;
+  ret.z = this->z + a.z;
+
+  return ret;
+}
+
 Vec3D Vec3D::operator-(Vec3D& a) {
   Vec3D ret;
 

@@ -10,4 +10,13 @@ struct ImuData {
   Quaternion gyroscope;
 };
 
+// Location data for an IMU based on reference frame of system
+struct ImuUnit {
+  Vec3D position;
+  Quaternion rotation;
+};
+
+// Get IMU data for one such unit
+ImuData imu_get_measurement(ImuUnit &unit);
+
 #endif

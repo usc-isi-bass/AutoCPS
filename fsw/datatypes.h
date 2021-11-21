@@ -14,6 +14,7 @@ struct Vec2D {
 // Standard 3D vector
 struct Vec3D {
   double x, y, z;
+  Vec3D operator+(Vec3D& a);
   Vec3D operator-(Vec3D& a);
 };
 

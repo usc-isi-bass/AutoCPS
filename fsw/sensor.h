@@ -6,7 +6,7 @@
 // Struct to define an inertial reference frame
 struct ReferenceFrame {
   Vec3D origin;
-  Vec3D axes;
+  Vec3D rotation;
 };
 
 // Basic datatype for a sensor
