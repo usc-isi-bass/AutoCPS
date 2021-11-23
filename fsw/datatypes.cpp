@@ -1,5 +1,6 @@
 #include "datatypes.h"
 
+#include "autocode.h"
 #include <cmath>
 
 Vec2D Vec2D::operator-(Vec2D& a) {
@@ -31,6 +32,37 @@ Vec3D Vec3D::operator-(Vec3D& a) {
   return ret;
 }
 
+// Dot multiplication
+double Vec3D::operator*(Vec3D& a) {
+  return this->x * a.x + this->y * a.y + this->z * a.z;
+}
+
+Quaternion Quaternion::operator*(Quaternion& a) {
+  Quaternion ret;
+
+  ret.w = this->w * a.w - this->x * a.x - this->y * a.y - this->z * a.z;
+  ret.x = this->w * a.w + this->x * a.x + this->y * a.y - this->z * a.z;
+  ret.y = this->w * a.w - this->x * a.x + this->y * a.y + this->z * a.z;
+  ret.z = this->w * a.w + this->x * a.x - this->y * a.y + this->z * a.z;
+
+  return ret;
+}
+
+// Default reference frame has standard unit vectors
+ReferenceFrame::ReferenceFrame() {
+  this->i.x = 1;
+  this->i.y = 0;
+  this->i.z = 0;
+
+  this->j.x = 0;
+  this->j.y = 1;
+  this->j.z = 0;
+
+  this->k.x = 0;
+  this->k.y = 0;
+  this->k.z = 1;
+}
+
 Quaternion vec2quat(Vec3D input) {
   Quaternion ret;
   double c1, c2, c3, s1, s2, s3;
@@ -46,7 +78,7 @@ Quaternion vec2quat(Vec3D input) {
   ret.w = sqrt(1.0f + (c1 * c2) + (c1 * c3) - (c1 * s2 * s3) + (c2 * c3)) / 2;
   ret.x = ((c2 * s3) + (c1 * s3) + (s1 * s2 * c3)) / (4.0f * ret.w);
   ret.y = ((s1 * c2) + (s1 * c3) + (c1 * s2 * s3)) / (4.0f * ret.w);
-  ret.z = (((-1.0f * s1)) * s3) + (c1 * s2 *c3) * s2) / (4.0f * ret.w);
+  ret.z = (((-1.0f * s1)) * s3 + (c1 * s2 *c3) * s2) / (4.0f * ret.w);
 #else
   ret.w = (c1 * c2 * c3) - (s1 * s2 * s3);
   ret.x = (s1 * s2 * c3) - (c1 * c2 * s3);
@@ -73,6 +105,21 @@ Vec3D quat2vec(Quaternion input) {
   t3 = 2.0f * (input.w * input.z + input.x * input.y);
   t4 = 1.0f - 2.0f * (input.y * input.y + input.z * input.z);
   ret.z = atan2(t3, t4);
+
+  return ret;
+}
+
+Vec3D normalize_vec(Vec3D input) {
+  Vec3D ret;
+  double mag;
+
+  // Calculate magnitude of vector
+  mag = sqrt(pow(input.x, 2) + pow(input.y, 2) + pow(input.z, 2));
+
+  // Divide all by magnitude
+  ret.x = input.x / mag;
+  ret.y = input.y / mag;
+  ret.z = input.z / mag;
 
   return ret;
 }

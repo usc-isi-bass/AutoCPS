@@ -16,7 +16,7 @@ ImuData stub_imu_get_measurement(ImuUnit &unit) {
 
   ret.gps_position = ivp_pos_convert_frame(imu_location, sensor_fr, system_fr);
 
-  Quaternion imu_rotation = current_rotation + unit.rotation;
+  Quaternion imu_rotation = current_rotation * unit.rotation;
 
   ret.gyroscope = ivp_rot_convert_frame(imu_rotation, sensor_fr, system_fr);
 
