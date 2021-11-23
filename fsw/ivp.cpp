@@ -52,7 +52,7 @@ Quaternion ivp_rot_convert_frame(Quaternion coordinate,
   ret.y = coordinate.y * (transform.t21 + transform.t22 + transform.t23);
   ret.z = coordinate.z * (transform.t31 + transform.t32 + transform.t33);
 
-  return vec2quat(normalize_vec(ret));
+  return vec2quat(normalize(ret));
 }
 
 Vec3D ivp_get_sensor_position(Sensor *sensor) {

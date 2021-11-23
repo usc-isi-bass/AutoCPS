@@ -109,7 +109,21 @@ Vec3D quat2vec(Quaternion input) {
   return ret;
 }
 
-Vec3D normalize_vec(Vec3D input) {
+Vec2D normalize(Vec2D input) {
+  Vec2D ret;
+  double mag;
+
+  // Calculate magnitude of vector
+  mag = sqrt(pow(input.x, 2) + pow(input.y, 2));
+
+  // Divide all by magnitude
+  ret.x = input.x / mag;
+  ret.y = input.y / mag;
+
+  return ret;
+}
+
+Vec3D normalize(Vec3D input) {
   Vec3D ret;
   double mag;
 
@@ -117,6 +131,23 @@ Vec3D normalize_vec(Vec3D input) {
   mag = sqrt(pow(input.x, 2) + pow(input.y, 2) + pow(input.z, 2));
 
   // Divide all by magnitude
+  ret.x = input.x / mag;
+  ret.y = input.y / mag;
+  ret.z = input.z / mag;
+
+  return ret;
+}
+
+Quaternion normalize(Quaternion input) {
+  Quaternion ret;
+  double mag;
+
+  // Calculate magnitude of vector
+  mag = sqrt(pow(input.w, 2) + pow(input.x, 2) + pow(input.y, 2) +
+             pow(input.z, 2));
+
+  // Divide all by magnitude
+  ret.w = input.w / mag;
   ret.x = input.x / mag;
   ret.y = input.y / mag;
   ret.z = input.z / mag;

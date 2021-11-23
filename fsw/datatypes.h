@@ -35,6 +35,10 @@ Quaternion vec2quat(Vec3D input);
 
 Vec3D quat2vec(Quaternion input);
 
-Vec3D normalize_vec(Vec3D input);
+Vec2D normalize(Vec2D input);
+
+Vec3D normalize(Vec3D input);
+
+Quaternion normalize(Quaternion input);
 
 #endif
