@@ -180,3 +180,17 @@ case.
 
 * Different sets/locations of servos/hydraulics/motors
 * Each servo/hydraulics/motors providing a different amount + scaling of force
+
+## Code layout
+
+Each of the described modules above correspond with a C++ source and header file
+of the same name. Some modules need to communicate with hardware as well. In
+these cases they will instead communicate with a "stubbed" module that simulates
+this hardware, which is located in `stub.h` and `stub.cpp`. A `params.h` is used
+for global variables regarding the design of the physical system, and everything
+is linked together in `main.cpp`.
+
+## Building
+
+This project can be built just like any other CMake project. The compiler used
+will need to support link-time optimization and SSE2 instructions.
