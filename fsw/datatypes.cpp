@@ -3,7 +3,16 @@
 #include "autocode.h"
 #include <cmath>
 
-Vec2D Vec2D::operator-(Vec2D& a) {
+Vec2D Vec2D::operator+(const Vec2D& a) {
+  Vec2D ret;
+
+  ret.x = this->x + a.x;
+  ret.y = this->y + a.y;
+
+  return ret;
+}
+
+Vec2D Vec2D::operator-(const Vec2D& a) {
   Vec2D ret;
 
   ret.x = this->x - a.x;
@@ -12,7 +21,12 @@ Vec2D Vec2D::operator-(Vec2D& a) {
   return ret;
 }
 
-Vec3D Vec3D::operator+(Vec3D& a) {
+// Dot multiplication
+double Vec2D::operator*(const Vec2D& a) {
+  return this->x * a.x + this->y * a.y;
+}
+
+Vec3D Vec3D::operator+(const Vec3D& a) {
   Vec3D ret;
 
   ret.x = this->x + a.x;
@@ -22,7 +36,7 @@ Vec3D Vec3D::operator+(Vec3D& a) {
   return ret;
 }
 
-Vec3D Vec3D::operator-(Vec3D& a) {
+Vec3D Vec3D::operator-(const Vec3D& a) {
   Vec3D ret;
 
   ret.x = this->x - a.x;
@@ -33,11 +47,11 @@ Vec3D Vec3D::operator-(Vec3D& a) {
 }
 
 // Dot multiplication
-double Vec3D::operator*(Vec3D& a) {
+double Vec3D::operator*(const Vec3D& a) {
   return this->x * a.x + this->y * a.y + this->z * a.z;
 }
 
-Quaternion Quaternion::operator*(Quaternion& a) {
+Quaternion Quaternion::operator*(const Quaternion& a) {
   Quaternion ret;
 
   ret.w = this->w * a.w - this->x * a.x - this->y * a.y - this->z * a.z;

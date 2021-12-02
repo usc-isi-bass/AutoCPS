@@ -8,7 +8,9 @@
 // Standard 2D vector
 struct Vec2D {
   double x, y;
+  Vec2D operator+(Vec2D& a);
   Vec2D operator-(Vec2D& a);
+  double operator*(Vec2D& a);
 };
 
 // Standard 3D vector
@@ -31,14 +33,13 @@ struct ReferenceFrame {
   ReferenceFrame();
 };
 
+// Quaternion/Euler rotation conversions
 Quaternion vec2quat(Vec3D input);
-
 Vec3D quat2vec(Quaternion input);
 
+// Normalize vectors/quaternions
 Vec2D normalize(Vec2D input);
-
 Vec3D normalize(Vec3D input);
-
 Quaternion normalize(Quaternion input);
 
 #endif
