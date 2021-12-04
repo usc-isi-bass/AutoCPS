@@ -27,4 +27,8 @@ inline double pos_autocode_get_max_speed() {
   return 125.0;
 }
 
+inline double autocode_clock_timer_ticks_to_epoch(long clock_timer_ticks) {
+  return clock_timer_ticks * 100;
+}
+
 #endif

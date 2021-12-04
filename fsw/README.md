@@ -180,7 +180,8 @@ case.
 
 The `clock` module provides an interface to an onboard clock to get the correct
 times. As this project does not have actual hardware to talk to, this module is
-stubbed and increases by one tick every loop.
+stubbed and increases by one tick every loop. A converter function between the
+ticks in the internal clock and the actual time will be randomizable.
 
 **Primary variations:**
 
