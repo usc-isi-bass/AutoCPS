@@ -16,7 +16,7 @@ Quaternion att_calculate_rotation_rate(Vec3D input_position, Vec3D input_waypoin
   Vec3D direction_euler = input_waypoint - input_position;
 
   // Get the maximum angular velocity of helicopter
-
+  
 
 
   return vec2quat(direction_euler);

@@ -6,7 +6,9 @@ cmake_minimum_required(VERSION 3.14)
 add_compile_options(-O3 -flto -msse2)
 
 add_library(datatypes datatypes.cpp)
-target_link_libraries(datatypes)
+
+add_library(clock clock.cpp)
+target_link_libraries(clock datatypes)
 
 add_library(stub stub.cpp)
 target_link_libraries(stub datatypes)

@@ -7,7 +7,6 @@
 struct ImuData {
   Vec3D gps_position;
   Vec3D accelerometer;
-  Quaternion gyroscope;
 };
 
 // Location data for an IMU based on reference frame of system
