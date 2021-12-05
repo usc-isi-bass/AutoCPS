@@ -2,6 +2,8 @@
 
 #include "autocode.h"
 
+long clock_timer_ticks;
+
 void clock_increment_timer() {
   clock_timer_ticks++;
 }

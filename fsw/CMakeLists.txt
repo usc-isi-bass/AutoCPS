@@ -41,4 +41,4 @@ add_library(servo_ctrl servo_ctrl.cpp)
 target_link_libraries(servo_ctrl datatypes att_ctrl)
 
 add_executable(fsw main.cpp)
-target_link_libraries(fsw pos_ctrl att_ctrl servo_ctrl datatypes stub)
+target_link_libraries(fsw pos_ctrl att_ctrl servo_ctrl datatypes stub clock)

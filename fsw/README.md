@@ -176,17 +176,20 @@ physical system. This requires knowledge of the design of the physical system.
 Communication to actual servos from this module should be stubbed for our use
 case.
 
-### clock
-
-The `clock` module provides an interface to an onboard clock to get the correct
-times. As this project does not have actual hardware to talk to, this module is
-stubbed and increases by one tick every loop. A converter function between the
-ticks in the internal clock and the actual time will be randomizable.
-
 **Primary variations:**
 
 * Different sets/locations of servos/hydraulics/motors
 * Each servo/hydraulics/motors providing a different amount + scaling of force
+
+### clock
+
+The `clock` module provides an interface to an onboard clock to get the correct
+times. As this project does not have actual hardware to talk to, this module is
+stubbed and increases by one tick every loop.
+
+**Primary variations:**
+
+* A converter function between the ticks in the internal clock and UTC time
 
 ## Code layout
 

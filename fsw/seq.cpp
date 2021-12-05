@@ -40,3 +40,7 @@ Vec3D seq_get_waypoint() {
 void seq_remove_waypoint() {
   seq_waypoints.pop();
 }
+
+bool seq_has_waypoints() {
+  return !seq_waypoints.empty();
+}

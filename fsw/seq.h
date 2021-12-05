@@ -14,4 +14,7 @@ Vec3D seq_get_waypoint();
 // Remove latest waypoint, if reached
 void seq_remove_waypoint();
 
+// Check if we still have waypoints remaining
+bool seq_has_waypoints();
+
 #endif

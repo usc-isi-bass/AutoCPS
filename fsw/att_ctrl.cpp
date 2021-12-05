@@ -1,5 +1,8 @@
 #include "att_ctrl.h"
+
 #include "params.h"
+
+#include <cmath>
 
 Quaternion att_calculate_lean_angle(Vec3D input_position, Vec3D input_waypoint) {
   Vec3D direction_euler = input_waypoint - input_position;
@@ -16,8 +19,9 @@ Quaternion att_calculate_rotation_rate(Vec3D input_position, Vec3D input_waypoin
   Vec3D direction_euler = input_waypoint - input_position;
 
   // Get the maximum angular velocity of helicopter
-  
-
+  double direction_magnitude = sqrt(pow(direction_euler.x, 2) +
+                                    pow(direction_euler.y, 2) +
+                                    pow(direction_euler.z, 2));
 
   return vec2quat(direction_euler);
 }
@@ -32,6 +36,7 @@ double att_calculate_climb_rate(Vec3D input_position, Vec3D input_waypoint) {
 double att_calculate_roll(Vec3D input_position, Vec3D input_waypoint) {
   Vec3D direction_euler = input_waypoint - input_position;
   
+
 }
 
 // Plane-only, calculate pitch needed to get to waypoint
