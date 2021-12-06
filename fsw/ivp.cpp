@@ -55,7 +55,7 @@ Quaternion ivp_rot_convert_frame(Quaternion coordinate,
   return vec2quat(normalize(ret));
 }
 
-Vec3D ivp_get_sensor_position(Sensor *sensor) {
+Vec3D ivp_get_sensor_position(SensorUnit *sensor) {
   SensorData sensor_data = sensor_get_data(sensor);
 
   return ivp_pos_convert_frame(sensor_data.output_position,
@@ -63,7 +63,7 @@ Vec3D ivp_get_sensor_position(Sensor *sensor) {
                                system_frame);
 }
 
-Quaternion ivp_get_sensor_rotation(Sensor *sensor) {
+Quaternion ivp_get_sensor_rotation(SensorUnit *sensor) {
   SensorData sensor_data;
   Quaternion sensor_rotation;
 

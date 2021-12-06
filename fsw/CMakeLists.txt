@@ -7,11 +7,11 @@ add_compile_options(-O3 -flto -msse2)
 
 add_library(datatypes datatypes.cpp)
 
-add_library(clock clock.cpp)
-target_link_libraries(clock datatypes)
-
 add_library(stub stub.cpp)
 target_link_libraries(stub datatypes)
+
+add_library(clock clock.cpp)
+target_link_libraries(clock datatypes)
 
 add_library(seq seq.cpp)
 target_link_libraries(seq stub datatypes)
@@ -32,7 +32,7 @@ add_library(ivp ivp.cpp)
 target_link_libraries(ivp kalman sensor)
 
 add_library(pos_ctrl pos_ctrl.cpp)
-target_link_libraries(pos_ctrl seq ivp kalman autonav sensor)
+target_link_libraries(pos_ctrl ivp kalman autonav sensor)
 
 add_library(att_ctrl att_ctrl.cpp)
 target_link_libraries(att_ctrl datatypes pos_ctrl)

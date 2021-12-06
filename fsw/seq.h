@@ -5,11 +5,16 @@
 
 #include "datatypes.h"
 
+struct SeqWaypoint {
+  Vec3D position;
+  double clock;
+};
+
 // Read input from file to get waypoints
 void seq_create_waypoints(const std::string& filename);
 
 // Get latest waypoint
-Vec3D seq_get_waypoint();
+SeqWaypoint seq_get_waypoint();
 
 // Remove latest waypoint, if reached
 void seq_remove_waypoint();

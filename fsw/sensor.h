@@ -10,10 +10,11 @@ struct SensorData {
 };
 
 // Basic datatype for a sensor
-struct Sensor {
+struct SensorUnit {
   ReferenceFrame sensor_frame;
+  Vec3D position;
 };
 
-SensorData sensor_get_data(Sensor *sensor);
+SensorData sensor_get_data(SensorUnit *sensor);
 
 #endif

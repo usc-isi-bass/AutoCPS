@@ -1,5 +1,7 @@
 #include "sensor.h"
 
-SensorData sensor_get_data(Sensor *sensor) {
+#include "stub.h"
 
+SensorData sensor_get_data(SensorUnit *sensor) {
+  return stub_sensor_get_measurement(*sensor);
 }

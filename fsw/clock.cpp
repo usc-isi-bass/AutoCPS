@@ -1,6 +1,6 @@
 #include "clock.h"
 
-#include "autocode.h"
+#include "params.h"
 
 long clock_timer_ticks;
 
@@ -17,5 +17,5 @@ void clock_get_current_time(long time) {
 }
 
 double clock_timer_ticks_to_epoch() {
-  return autocode_clock_timer_ticks_to_epoch(clock_timer_ticks);
+  return CLOCK_TICKS_PER_SEC * clock_timer_ticks;
 }

@@ -22,9 +22,9 @@ Quaternion ivp_rot_convert_frame(Quaternion coordinate,
 TransformationMatrix ivp_build_transform_matrix(ReferenceFrame &frame_1,
                                                 ReferenceFrame &frame_2);
 
-Vec3D ivp_get_sensor_position(Sensor *sensor);
+Vec3D ivp_get_sensor_position(SensorUnit *sensor);
 
-Quaternion ivp_get_sensor_rotation(Sensor *sensor);
+Quaternion ivp_get_sensor_rotation(SensorUnit *sensor);
 
 ReferenceFrame ivp_get_system_frame();
 void ivp_set_system_frame(ReferenceFrame &ref);

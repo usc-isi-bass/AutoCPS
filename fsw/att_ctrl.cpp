@@ -23,13 +23,27 @@ Quaternion att_calculate_rotation_rate(Vec3D input_position, Vec3D input_waypoin
                                     pow(direction_euler.y, 2) +
                                     pow(direction_euler.z, 2));
 
+  // Normalize to max magnitude if needed
+  if (direction_magnitude > ATT_MAX_ROTATION_RATE) {
+    direction_euler = normalize(direction_euler);
+    direction_euler.x *= ATT_MAX_ROTATION_RATE;
+    direction_euler.y *= ATT_MAX_ROTATION_RATE;
+    direction_euler.z *= ATT_MAX_ROTATION_RATE;
+  }
+
   return vec2quat(direction_euler);
 }
 
 double att_calculate_climb_rate(Vec3D input_position, Vec3D input_waypoint) {
-  Vec3D direction_euler = input_waypoint - input_position;
+  Vec3D direction = quat2vec(att_calculate_rotation_rate(input_position,
+                                                         input_waypoint));
 
-  // Get the maximum angular velocity of helicopter
+  // Check if we even need to 
+  if (direction.z == ATT_MAX_ROTATION_RATE) {
+
+  }
+
+
 }
 
 // Plane-only, calculate roll needed to get to waypoint

@@ -1,5 +1,7 @@
 #include "datatypes.h"
 
+#include "autocode.h"
+
 #include <cmath>
 
 Vec2D Vec2D::operator+(Vec2D& a) {
@@ -48,6 +50,17 @@ Vec3D Vec3D::operator-(Vec3D& a) {
 // Dot multiplication
 double Vec3D::operator*(Vec3D& a) {
   return this->x * a.x + this->y * a.y + this->z * a.z;
+}
+
+// Scalar multiplication
+Vec3D Vec3D::operator*(double& a) {
+  Vec3D ret;
+
+  ret.x = this->x * a;
+  ret.y = this->y * a;
+  ret.z = this->z * a;
+
+  return ret;
 }
 
 Quaternion Quaternion::operator*(Quaternion& a) {

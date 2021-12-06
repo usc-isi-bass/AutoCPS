@@ -19,6 +19,7 @@ struct Vec3D {
   Vec3D operator+(Vec3D& a);
   Vec3D operator-(Vec3D& a);
   double operator*(Vec3D& a);
+  Vec3D operator*(double& a);
 };
 
 // Standard quarternion

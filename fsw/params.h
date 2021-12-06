@@ -20,6 +20,12 @@ const SystemType fsw_system = SYS_ROVER;
 #define ATT_MAX_ROTATION_RATE 100
 #define ATT_MAX_CLIMB_RATE 100
 
+#define ATT_MAX_ROLL 100
+#define ATT_MAX_PITCH 100
+#define ATT_MAX_YAW 100
+
+#define CLOCK_TICKS_PER_SEC 100.0f
+
 // Plane-only
 #define NUM_ENGINES 2
 const double engines[NUM_ENGINES][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
