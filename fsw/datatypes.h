@@ -25,7 +25,9 @@ struct Vec3D {
 // Standard quarternion
 struct Quaternion {
   double w, x, y, z;
+  Quaternion operator*(Quaternion a);
   Quaternion operator*(Quaternion& a);
+  inline Quaternion conj();
 };
 
 // Definition of an inertial reference frame by the 3 unit vectors

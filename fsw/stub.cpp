@@ -20,7 +20,6 @@ ImuData stub_imu_get_measurement(ImuUnit &unit) {
   ret.gps_position = ivp_pos_convert_frame(imu_location, sensor_fr, system_fr);
 
   // Calculate new velocity as change in position over the last time frame
-
   ret.accelerometer = current_velocity - past_velocity;
 
   // Update position

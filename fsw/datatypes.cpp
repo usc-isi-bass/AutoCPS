@@ -1,6 +1,7 @@
 #include "datatypes.h"
 
 #include "autocode.h"
+#include "params.h"
 
 #include <cmath>
 
@@ -63,13 +64,31 @@ Vec3D Vec3D::operator*(double& a) {
   return ret;
 }
 
-Quaternion Quaternion::operator*(Quaternion& a) {
+Quaternion Quaternion::operator*(Quaternion a) {
+  Quaternion ret, b;
+
+#ifdef JPL_QUATERNION
+  a = a.conj();
+  b = b.conj();
+#else
+  b = this;
+#endif
+
+  ret.w = b.w * a.w - b.x * a.x - b.y * a.y - b.z * a.z;
+  ret.x = b.w * a.w + b.x * a.x + b.y * a.y - b.z * a.z;
+  ret.y = b.w * a.w - b.x * a.x + b.y * a.y + b.z * a.z;
+  ret.z = b.w * a.w + b.x * a.x - b.y * a.y + b.z * a.z;
+
+  return ret;
+}
+
+inline Quaternion Quaternion::conj() {
   Quaternion ret;
 
-  ret.w = this->w * a.w - this->x * a.x - this->y * a.y - this->z * a.z;
-  ret.x = this->w * a.w + this->x * a.x + this->y * a.y - this->z * a.z;
-  ret.y = this->w * a.w - this->x * a.x + this->y * a.y + this->z * a.z;
-  ret.z = this->w * a.w + this->x * a.x - this->y * a.y + this->z * a.z;
+  ret.w = this->w;
+  ret.x = this->x * -1;
+  ret.y = this->y * -1;
+  ret.z = this->z * -1;
 
   return ret;
 }
@@ -91,25 +110,22 @@ ReferenceFrame::ReferenceFrame() {
 
 Quaternion vec2quat(Vec3D input) {
   Quaternion ret;
-  double c1, c2, c3, s1, s2, s3;
+  double cy, sy, cp, sp, cr, sr;
 
-  c1 = cos(input.x / 2);
-  c2 = cos(input.y / 2);
-  c3 = cos(input.z / 2);
-  s1 = sin(input.x / 2);
-  s2 = sin(input.y / 2);
-  s3 = sin(input.z / 2);
+  cy = cos(input.z * 0.5);
+  sy = sin(input.z * 0.5);
+  cp = cos(input.y * 0.5);
+  sp = sin(input.y * 0.5);
+  cr = cos(input.x * 0.5);
+  sr = sin(input.x * 0.5);
 
-#ifdef ALTERNATIVE_VEC2QUAT
-  ret.w = sqrt(1.0f + (c1 * c2) + (c1 * c3) - (c1 * s2 * s3) + (c2 * c3)) / 2;
-  ret.x = ((c2 * s3) + (c1 * s3) + (s1 * s2 * c3)) / (4.0f * ret.w);
-  ret.y = ((s1 * c2) + (s1 * c3) + (c1 * s2 * s3)) / (4.0f * ret.w);
-  ret.z = (((-1.0f * s1)) * s3 + (c1 * s2 *c3) * s2) / (4.0f * ret.w);
-#else
-  ret.w = (c1 * c2 * c3) - (s1 * s2 * s3);
-  ret.x = (s1 * s2 * c3) - (c1 * c2 * s3);
-  ret.y = (s1 * c2 * c3) - (c1 * s2 * s3);
-  ret.z = (c1 * s2 * c3) - (s1 * c2 * s3);
+  ret.w = cr * cp * cy + sr * sp * sy;
+  ret.x = sr * cp * cy - cr * sp * sy;
+  ret.y = cr * sp * cy + sr * cp * sy;
+  ret.z = cr * cp * sy - sr * sp * cy;
+
+#ifndef JPL_QUATERNION
+  ret = ret.conj();
 #endif
 
   return ret;
@@ -117,20 +133,25 @@ Quaternion vec2quat(Vec3D input) {
 
 Vec3D quat2vec(Quaternion input) {
   Vec3D ret;
-  double t0, t1, t2, t3, t4;
+  double sinr_cosp, cosr_cosp, sinp, siny_cosp, cosy_cosp;
 
-  t0 = +2.0f * (input.w * input.x + input.y * input.z);
-  t1 = +1.0f - 2.0f * (input.x * input.x + input.y * input.y);
-  ret.x = atan2(t0, t1);
+#ifndef JPL_QUATERNION
+  input = input.conj();
+#endif
 
-  t2 = 2.0f * (input.w * input.y - input.z * input.x);
-  t2 = (t2 > 1.0f) ? 1.0f : t2;
-  t2 = (t2 < -1.0f) ? -1.0f : t2;
-  ret.y = asin(t2);
+  sinr_cosp = 2 * (input.w * input.x + input.y * input.z);
+  cosr_cosp = 1 - 2 * (input.x * input.x + input.y * input.y);
+  ret.x = atan2(sinr_cosp, cosr_cosp);
 
-  t3 = 2.0f * (input.w * input.z + input.x * input.y);
-  t4 = 1.0f - 2.0f * (input.y * input.y + input.z * input.z);
-  ret.z = atan2(t3, t4);
+  sinp = 2 * (input.w * input.y - input.z * input.x);
+  if (abs(sinp) >= 1)
+    ret.y = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+  else
+    ret.y = asin(sinp);
+
+  siny_cosp = 2 * (input.w * input.z + input.x * input.y);
+  cosy_cosp = 1 - 2 * (input.y * input.y + input.z * input.z);
+  ret.z = atan2(siny_cosp, cosy_cosp);
 
   return ret;
 }

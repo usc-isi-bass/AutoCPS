@@ -4,9 +4,8 @@
 #include "datatypes.h"
 
 struct PosOutputData {
-  Vec3D target_position;
-  Vec3D target_velocity;
-  Vec3D target_acceleration;
+  Vec3D position;
+  Quaternion rotation;
 };
 
 // Choose whether to use curved waypoints

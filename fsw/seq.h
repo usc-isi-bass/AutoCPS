@@ -7,6 +7,7 @@
 
 struct SeqWaypoint {
   Vec3D position;
+  Quaternion rotation;
   double clock;
 };
 

@@ -8,9 +8,6 @@
 #include <cmath>
 #include <queue>
 
-// Optional define
-#define ALTERNATIVE_VEC2QUAT
-
 // Constants for use with the S-curve functions
 double pos_autocode_s_curve_constant_1;
 double pos_autocode_s_curve_constant_2;

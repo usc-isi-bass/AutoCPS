@@ -7,6 +7,8 @@
 
 #define SYS_PI 3.1416
 
+#define JPL_QUATERNION
+
 #include "datatypes.h"
 
 enum SystemType {SYS_ROVER, SYS_PLANE, SYS_ROCKET, SYS_HELICOPTER};
