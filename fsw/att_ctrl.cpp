@@ -40,7 +40,7 @@ double att_calculate_climb_rate(AttInputData input_position, PosOutputData input
 
   // Check if we even need to climb
   if (direction.z == ATT_MAX_ROTATION_RATE) {
-
+    
   }
 
 

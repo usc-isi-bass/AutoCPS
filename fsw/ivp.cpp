@@ -1,6 +1,7 @@
 #include "ivp.h"
 
 #include "datatypes.h"
+#include "params.h"
 #include "kalman.h"
 
 ReferenceFrame system_frame;
@@ -9,6 +10,7 @@ ReferenceFrame system_frame;
 TransformationMatrix ivp_build_transform_matrix(ReferenceFrame &frame_1,
                                                 ReferenceFrame &frame_2) {
   TransformationMatrix ret;
+  Vec3D fr1, fr2;
 
   ret.t11 = frame_1.i * frame_2.i;
   ret.t12 = frame_1.i * frame_2.j;
@@ -72,6 +74,19 @@ Quaternion ivp_get_sensor_rotation(SensorUnit *sensor) {
   return ivp_rot_convert_frame(sensor_rotation,
                                sensor->sensor_frame,
                                system_frame);
+}
+
+Vec3D ivp_get_imu_position(ImuUnit *imu) {
+  ImuData imu_data = imu_get_measurement(imu);
+
+  return ivp_pos_convert_frame(imu_data.gps_position,
+                               imu->imu_frame,
+                               system_frame);
+
+}
+
+Quaternion ivp_get_imu_rotation(ImuUnit *sensor) {
+
 }
 
 ReferenceFrame ivp_get_system_frame() {
