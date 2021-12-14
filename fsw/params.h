@@ -5,11 +5,9 @@
 #ifndef PARAMS_H
 #define PARAMS_H
 
-#define SYS_PI 3.1416
-
-#define JPL_QUATERNION
-
 #include "datatypes.h"
+
+#include <cmath>
 
 enum SystemType {SYS_ROVER, SYS_PLANE, SYS_ROCKET, SYS_HELICOPTER};
 
@@ -18,10 +16,16 @@ const double mass = 125.0;
 const double dimensions[3] = {0.0, 0.0, 0.0};
 const SystemType fsw_system = SYS_ROVER;
 
-#define POS_MAX_ERROR 0.01
+#define JPL_QUATERNION
 
-#define ATT_MAX_LEAN_ANGLE 100
-#define ATT_MAX_ROTATION_RATE 100
+#define POS_MAX_ERROR 0.01
+#define SYS_PI acos(-1.0)
+
+#define ATT_MAX_ROLL_ANGLE 0.25 * SYS_PI
+#define ATT_MAX_PITCH_ANGLE 0.25 * SYS_PI
+#define ATT_MAX_YAW_ANGLE 0.25 * SYS_PI
+
+#define ATT_MAX_ROTATION_RATE SYS_PI
 #define ATT_MAX_CLIMB_RATE 100
 
 #define ATT_MAX_ROLL 100
@@ -48,6 +52,5 @@ const double mass_flow_rate = 10.0;
 #define NUM_PROPS 2
 const double PROPELLERS[NUM_PROPS][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 const double PROP_THRUSTS[NUM_PROPS] = {0.0, 0.0};
-const double PROP_MAX_ANGLE = 0.133f * SYS_PI;
 
 #endif

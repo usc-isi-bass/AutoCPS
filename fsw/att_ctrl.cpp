@@ -8,9 +8,12 @@ Quaternion att_calculate_lean_angle(AttInputData input_position, PosOutputData i
   Vec3D direction_euler = input_waypoint.position - input_position.position;
 
   // Make sure none of the waypoints are above the maximum climb rate
-  if (direction_euler.x >= PROP_MAX_ANGLE) direction_euler.x = PROP_MAX_ANGLE;
-  if (direction_euler.y >= PROP_MAX_ANGLE) direction_euler.y = PROP_MAX_ANGLE;
-  if (direction_euler.z >= PROP_MAX_ANGLE) direction_euler.z = PROP_MAX_ANGLE;
+  if (direction_euler.x >= ATT_MAX_ROLL_ANGLE)
+    direction_euler.x = ATT_MAX_ROLL_ANGLE;
+  if (direction_euler.y >= ATT_MAX_PITCH_ANGLE)
+    direction_euler.y = ATT_MAX_PITCH_ANGLE;
+  if (direction_euler.z >= ATT_MAX_YAW_ANGLE)
+    direction_euler.z = ATT_MAX_YAW_ANGLE;
 
   return vec2quat(direction_euler);
 }
