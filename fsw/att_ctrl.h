@@ -7,15 +7,15 @@
 struct AttInputData {
   Vec3D position;
   Vec3D acceleration;
+  Quaternion rotation;
 };
 
-Quaternion att_calculate_lean_angle(AttInputData input_position, PosOutputData input_waypoint);
-Quaternion att_calculate_rotation_rate(AttInputData input_position, PosOutputData input_waypoint);
-double att_calculate_climb_rate(AttInputData input_position, PosOutputData input_waypoint);
+Quaternion att_calculate_lean_angle(PosOutputData input_waypoint);
+double att_calculate_climb_rate(PosOutputData input_waypoint);
 
-double att_calculate_roll(AttInputData input_position, PosOutputData input_waypoint);
-double att_calculate_pitch(AttInputData input_position, PosOutputData input_waypoint);
-double att_calculate_yaw(AttInputData input_position, PosOutputData input_waypoint);
-double att_calculate_throttle(AttInputData input_position, PosOutputData input_waypoint);
+double att_calculate_roll(PosOutputData input_waypoint);
+double att_calculate_pitch(PosOutputData input_waypoint);
+double att_calculate_yaw(PosOutputData input_waypoint);
+double att_calculate_throttle(PosOutputData input_waypoint);
 
 #endif

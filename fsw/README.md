@@ -154,7 +154,6 @@ with inlined functions.
 * Different S-curve functions to do navigation with
 * Different heuristics to choose the waypoints from (e.g. must we hit the
 waypoints or just pass by them?)
-* Limits on the behavior of the physical system
 
 ### attitude
 
@@ -164,6 +163,7 @@ the most significant module for variations that can be added.
 
 **Primary variations:**
 
+* Limits on the behavior of the physical system
 * Limits on the available angles of rotation / roll-pitch-yaw (extension of the
 same limits in `position`)
 

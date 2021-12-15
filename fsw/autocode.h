@@ -3,6 +3,7 @@
 
 #include "datatypes.h"
 #include "params.h"
+#include "pos_ctrl.h"
 #include "seq.h"
 
 #include <cmath>
@@ -45,5 +46,20 @@ inline Vec3D pos_autocode_s_curve_derivative(Vec3D curr, SeqWaypoint target) {
 inline double pos_autocode_get_max_speed() {
   return 125.0;
 }
+
+inline Vec3D att_autocode_calculate_lean_angle(PosOutputData input_waypoint) {
+  Vec3D direction_euler = quat2vec(input_waypoint.rotation);
+
+  // Make sure none of the waypoints are above the maximum climb rate
+  if (direction_euler.x >= ATT_MAX_ROLL_ANGLE)
+    direction_euler.x = ATT_MAX_ROLL_ANGLE;
+  if (direction_euler.y >= ATT_MAX_PITCH_ANGLE)
+    direction_euler.y = ATT_MAX_PITCH_ANGLE;
+  if (direction_euler.z >= ATT_MAX_YAW_ANGLE)
+    direction_euler.z = ATT_MAX_YAW_ANGLE;
+
+  return direction_euler;
+}
+
 
 #endif

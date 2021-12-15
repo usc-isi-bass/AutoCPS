@@ -37,6 +37,8 @@ const SystemType fsw_system = SYS_ROVER;
 // Plane-only
 #define NUM_ENGINES 2
 const double engines[NUM_ENGINES][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
+#define STALL_SPEED 10
+#define MAX_SPEED 100
 
 // Rover-only
 #define NUM_MOTORS 2

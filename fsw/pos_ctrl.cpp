@@ -40,16 +40,15 @@ PosOutputData pos_get_next_location(PosOutputData current_location) {
 
     // Get target rotation based on new location from previous location
     ret.rotation = target_location.rotation * current_location.rotation.conj();
-
-    return ret;
   } else {
     // For straight-line navigation, just send in next waypoint
-    ret.position = pos_autocode_s_curve_derivative(current_location.position, target_location) * max_change_in_time_slice;
+    ret.position = (current_location.position - target_location.position) * max_change_in_time_slice;
 
     // Get target rotation based on new location from previous location
     ret.rotation = target_location.rotation * current_location.rotation.conj();
-    return ret;
   }
+
+  return ret;
 }
 
 // Add a sensor to poll when doing pos_get_data

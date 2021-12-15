@@ -1,74 +1,60 @@
 #include "att_ctrl.h"
 
+#include "autocode.h"
 #include "params.h"
 
 #include <cmath>
 
-Quaternion att_calculate_lean_angle(AttInputData input_position, PosOutputData input_waypoint) {
-  Vec3D direction_euler = input_waypoint.position - input_position.position;
-
-  // Make sure none of the waypoints are above the maximum climb rate
-  if (direction_euler.x >= ATT_MAX_ROLL_ANGLE)
-    direction_euler.x = ATT_MAX_ROLL_ANGLE;
-  if (direction_euler.y >= ATT_MAX_PITCH_ANGLE)
-    direction_euler.y = ATT_MAX_PITCH_ANGLE;
-  if (direction_euler.z >= ATT_MAX_YAW_ANGLE)
-    direction_euler.z = ATT_MAX_YAW_ANGLE;
-
-  return vec2quat(direction_euler);
+Quaternion att_calculate_lean_angle(PosOutputData input_waypoint) {
+  return vec2quat(att_autocode_calculate_lean_angle(input_waypoint));
 }
 
-Quaternion att_calculate_rotation_rate(AttInputData input_position, PosOutputData input_waypoint) {
-  Vec3D direction_euler = input_waypoint.position - input_position.position;
-
-  // Get the maximum angular velocity of helicopter
-  double direction_magnitude = sqrt(pow(direction_euler.x, 2) +
-                                    pow(direction_euler.y, 2) +
-                                    pow(direction_euler.z, 2));
-
-  // Switch to max magnitude if needed
-  if (direction_magnitude > ATT_MAX_ROTATION_RATE) {
-    direction_euler = normalize(direction_euler);
-    direction_euler.x *= ATT_MAX_ROTATION_RATE;
-    direction_euler.y *= ATT_MAX_ROTATION_RATE;
-    direction_euler.z *= ATT_MAX_ROTATION_RATE;
-  }
-
-  return vec2quat(direction_euler);
-}
-
-double att_calculate_climb_rate(AttInputData input_position, PosOutputData input_waypoint) {
-  Vec3D direction = quat2vec(att_calculate_rotation_rate(input_position,
-                                                         input_waypoint));
-
-  // Check if we even need to climb
-  if (direction.z == ATT_MAX_ROTATION_RATE) {
-    
-  }
-
-
+double att_calculate_climb_rate(PosOutputData input_waypoint) {
+  double climb_rate = input_waypoint.position.z;
+  return (climb_rate >= ATT_MAX_CLIMB_RATE) ? ATT_MAX_CLIMB_RATE : climb_rate;
 }
 
 // Plane-only, calculate roll needed to get to waypoint
-double att_calculate_roll(AttInputData input_position, PosOutputData input_waypoint) {
-  Vec3D direction_euler = input_waypoint.position - input_position.position;
+double att_calculate_roll(PosOutputData input_waypoint) {
+  Vec3D direction_euler = input_waypoint.position;
   
-
+  if (direction_euler.x >= ATT_MAX_ROLL_ANGLE)
+    return ATT_MAX_ROLL_ANGLE;
+  else
+    return direction_euler.x;
 }
 
 // Plane-only, calculate pitch needed to get to waypoint
-double att_calculate_pitch(AttInputData input_position, PosOutputData input_waypoint) {
-  Vec3D direction_euler = input_waypoint.position - input_position.position;
+double att_calculate_pitch(PosOutputData input_waypoint) {
+  Vec3D direction_euler = input_waypoint.position;
   
+  if (direction_euler.y >= ATT_MAX_PITCH_ANGLE)
+    return ATT_MAX_PITCH_ANGLE;
+  else
+    return direction_euler.y;
 }
 
 // Plane-only, calculate yaw needed to get to waypoint
-double att_calculate_yaw(AttInputData input_position, PosOutputData input_waypoint) {
-  Vec3D direction_euler = input_waypoint.position - input_position.position;
+double att_calculate_yaw(PosOutputData input_waypoint) {
+  Vec3D direction_euler = input_waypoint.position;
   
+  if (direction_euler.z >= ATT_MAX_YAW_ANGLE)
+    return ATT_MAX_YAW_ANGLE;
+  else
+    return direction_euler.z;
 }
 
-double att_calculate_throttle(AttInputData input_position, PosOutputData input_waypoint) {
-  Vec3D direction_euler = input_waypoint.position - input_position.position;
+double att_calculate_speed(PosOutputData input_waypoint) {
+  Vec3D direction_euler = input_waypoint.position;
+  double ret;
   
+  // Reach max speed if able
+  ret = sqrt(pow(direction_euler.x, 2) + pow(direction_euler.y, 2) +
+             pow(direction_euler.z, 2));
+  if (ret > MAX_SPEED) ret = MAX_SPEED;
+
+  // If not calculate minimum speed needed
+  if (ret < STALL_SPEED) ret = STALL_SPEED;
+
+  return ret;
 }
