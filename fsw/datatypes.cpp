@@ -5,6 +5,8 @@
 
 #include <cmath>
 
+using namespace std;
+
 Vec2D Vec2D::operator+(Vec2D& a) {
   Vec2D ret;
 
@@ -82,7 +84,7 @@ Quaternion Quaternion::operator*(Quaternion a) {
   return ret;
 }
 
-inline Quaternion Quaternion::conj() {
+Quaternion Quaternion::conj() {
   Quaternion ret;
 
   ret.w = this->w;

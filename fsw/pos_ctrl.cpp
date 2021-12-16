@@ -29,9 +29,11 @@ void pos_set_curved_waypoints(bool use_curved_waypoints) {
 }
 
 // Get the next velocity heading to take
-PosOutputData pos_get_next_location(PosOutputData current_location) {
+PosOutputData pos_get_next_location() {
   SeqWaypoint target_location = autonav_get_waypoint();
-  PosOutputData ret;
+  PosOutputData ret, current_location;
+
+  current_location = pos_get_current_location();
 
   // If waypoint hit, go to next one
   while (abs(target_location.position.x - current_location.position.x) <= POS_MAX_ERROR &&

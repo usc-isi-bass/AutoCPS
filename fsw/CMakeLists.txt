@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14)
 
 # We need link-time optimization so everything fits nicely in one binary
 # Also some functions can get inlined this way
-add_compile_options(-O3 -flto -msse2)
+add_compile_options(-O3)
 
 add_library(datatypes datatypes.cpp)
 
@@ -44,4 +44,4 @@ add_library(servo_ctrl servo_ctrl.cpp)
 target_link_libraries(servo_ctrl datatypes att_ctrl)
 
 add_executable(fsw main.cpp)
-target_link_libraries(fsw datatypes att_ctrl servo_ctrl datatypes stub clock)
+target_link_libraries(fsw datatypes pos_ctrl att_ctrl servo_ctrl stub clock)
