@@ -63,7 +63,7 @@ void pos_add_imu(ImuUnit *imu) {
   pos_imu_count++;
 }
 
-PosOutputData pos_get_data() {
+PosOutputData pos_get_current_location() {
   PosOutputData ret;
   Vec3D estim_loc;
 

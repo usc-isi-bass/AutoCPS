@@ -13,7 +13,7 @@ std::queue<SeqWaypoint> seq_waypoints;
 
 // Push a new set of waypoints in from a file
 // This can simulate an autopilot or controller input
-void seq_create_waypoints(const string& filename) {
+void seq_create_waypoints(const string filename) {
   ifstream input_file(filename);
   std::string line;
   SeqWaypoint input_waypoint;

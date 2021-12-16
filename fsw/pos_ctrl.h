@@ -21,6 +21,6 @@ void pos_add_sensor(SensorUnit *sensor);
 void pos_add_imu(ImuUnit *imu);
 
 // Calculate current location based on data from kalman and imu
-PosOutputData pos_get_data();
+PosOutputData pos_get_current_location();
 
 #endif

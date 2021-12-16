@@ -12,7 +12,7 @@ struct SeqWaypoint {
 };
 
 // Read input from file to get waypoints
-void seq_create_waypoints(const std::string& filename);
+void seq_create_waypoints(const std::string filename);
 
 // Get latest waypoint
 SeqWaypoint seq_get_waypoint();
