@@ -9,8 +9,13 @@
 using namespace std;
 
 int main(int argc, char **argv) {
+  if (argc != 2) {
+    cout << "Usage: fsw <input file>" << endl;
+    return -1;
+  }
+
   // Get waypoints from an input file
-  seq_create_waypoints("input.txt");
+  seq_create_waypoints(argv[1]);
 
   // Execution loop
   while(true) {
@@ -18,11 +23,11 @@ int main(int argc, char **argv) {
 
     PosOutputData curr_pos = pos_get_current_location();
 
-    std::cout << "Time: " << clock_get_current_time() << std::endl;
-    std::cout << "Location: {" << curr_pos.position.x << ", " <<
+    cout << "Time: " << clock_get_current_time() << endl;
+    cout << "Location: {" << curr_pos.position.x << ", " <<
                  curr_pos.position.y << ", " << curr_pos.position.z << "}" <<
-                 std::endl;
-    std::cout << std::endl;
+                 endl;
+    cout << endl;
 
     servo_move(pos_get_next_location());
   }
