@@ -18,7 +18,7 @@ const SystemType fsw_system = SYS_ROVER;
 
 #define JPL_QUATERNION
 
-#define POS_MAX_ERROR 0.01
+#define POS_MAX_ERROR 0.5
 #define SYS_PI acos(-1.0)
 
 #define ATT_MAX_ROLL_ANGLE 0.25 * SYS_PI

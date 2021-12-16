@@ -33,6 +33,14 @@ PosOutputData pos_get_next_location(PosOutputData current_location) {
   SeqWaypoint target_location = autonav_get_waypoint();
   PosOutputData ret;
 
+  // If waypoint hit, go to next one
+  while (abs(target_location.position.x - current_location.position.x) <= POS_MAX_ERROR &&
+         abs(target_location.position.y - current_location.position.y) <= POS_MAX_ERROR &&
+         abs(target_location.position.z - current_location.position.z) <= POS_MAX_ERROR) {
+    seq_remove_waypoint();
+    target_location = autonav_get_waypoint();
+  }
+
   double max_change_in_time_slice = pos_autocode_get_max_speed() * CLOCK_TICKS_PER_SEC;
   if (pos_use_s_curve) {
     // Set new waypoint based on derivative
