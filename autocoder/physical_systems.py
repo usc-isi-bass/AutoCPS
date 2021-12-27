@@ -1,4 +1,4 @@
-# This class contains all the information about the physical object needed for
+# This .py contains all the information about the physical object needed for
 # generating the controller software
 
 # Octants are organized in [x, y, z] form, with each variable being either -1 or
@@ -50,6 +50,9 @@ class PhysicalSystem:
 
     # List of locations for sensors, add with add_sensor method
     sensor_locations = []
+
+    # Whether to use JPL quaternion standard
+    jpl_quaternion = False
 
     # Default type is rover, we can change to different types
     type = 'rover'

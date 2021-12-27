@@ -15,4 +15,6 @@ double pos_autocode_get_max_speed();
 
 Vec3D att_autocode_calculate_lean_angle(PosOutputData input_waypoint);
 
+void servo_autocode_servo_move(PosOutputData input_waypoint);
+
 #endif

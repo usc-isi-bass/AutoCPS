@@ -2,6 +2,9 @@
 
 #include "params.h"
 #include <cmath>
+#include <iostream>
+
+using namespace std;
 
 // Constants for use with the S-curve functions
 double pos_autocode_s_curve_constant_1;
@@ -53,4 +56,10 @@ Vec3D att_autocode_calculate_lean_angle(PosOutputData input_waypoint) {
     direction_euler.z = ATT_MAX_YAW_ANGLE;
 
   return direction_euler;
+}
+
+void servo_autocode_servo_move(PosOutputData input_waypoint) {
+  cout << "servo movement to (" << input_waypoint.position.x << ", ";
+  cout << input_waypoint.position.y << ", " << input_waypoint.position.z;
+  cout << ")" << endl;
 }
