@@ -72,21 +72,61 @@ class CodeGeneration:
         self.params_h.write('#define CLOCK_TICKS_PER_SEC 100.0f\n\n')
 
         if system.type == 'helicopter':
-            self.params_h.write('#define NUM_PROPS 2\n')
-            self.params_h.write('const double PROPELLERS[NUM_PROPS][3] = { {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0} };\n')
-            self.params_h.write('const double PROP_THRUSTS[NUM_PROPS] = {0.0, 0.0};\n\n')
+            self.params_h.write('#define NUM_PROPS {}\n'.format(len(system.rotor_locations)))
+
+            self.params_h.write('const double PROPELLERS[NUM_PROPS][3] = {')
+            for i in len(system.rotor_locations):
+                self.params_h.write('{ {}, {}, {} }'.format(system.rotor_locations[i][0],
+                                                            system.rotor_locations[i][1],
+                                                            system.rotor_locations[i][2]))
+                if i != (len(system.rotor_locations) - 1):
+                    self.params_h.write(', ')
+            self.params_h.write('};\n')
+
+            self.params_h.write('const double PROP_THRUSTS[NUM_PROPS] = {')
+            for i in len(system.rotor_locations):
+                self.params_h.write('{}'.format(system.rotor_locations[i][3]))
+                if i != (len(system.rotor_locations) - 1):
+                    self.params_h.write(', ')
+            self.params_h.write('};\n\n')
+
         elif system.type == 'plane':
-            self.params_h.write('#define NUM_ENGINES 2\n')
-            self.params_h.write('const double engines[NUM_ENGINES][3] = { {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0} };\n')
-            self.params_h.write('#define STALL_SPEED 10\n')
-            self.params_h.write('#define MAX_SPEED 100\n\n')
+            self.params_h.write('#define NUM_ENGINES {}\n'.format(len(system.engine_locations)))
+
+            self.params_h.write('const double engines[NUM_ENGINES][3] = {')
+            for i in len(system.engine_locations):
+                self.params_h.write('{ {}, {}, {} }'.format(system.engine_locations[i][0],
+                                                            system.engine_locations[i][1],
+                                                            system.engine_locations[i][2]))
+                if i != (len(system.engine_locations) - 1):
+                    self.params_h.write(', ')
+            self.params_h.write('};\n')
+
+            self.params_h.write('#define STALL_SPEED {}\n'.format(system.stall_speed))
+            self.params_h.write('#define MAX_SPEED {}\n\n'.format(system.max_speed))
+
         elif system.type == 'rover':
-            self.params_h.write('#define NUM_MOTORS 2\n')
-            self.params_h.write('const double motors[NUM_ENGINES][3] = { {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0} };\n')
-            self.params_h.write('const double motor_max_speeds[NUM_ENGINES] = {0.0, 0.0};\n\n')
+            self.params_h.write('#define NUM_MOTORS {}\n'.format(len(system.rotor_locations)))
+
+            self.params_h.write('const double motors[NUM_PROPS][3] = {')
+            for i in len(system.motor_locations):
+                self.params_h.write('{ {}, {}, {} }'.format(system.motor_locations[i][0],
+                                                            system.motor_locations[i][1],
+                                                            system.motor_locations[i][2]))
+                if i != (len(system.motor_locations) - 1):
+                    self.params_h.write(', ')
+            self.params_h.write('};\n')
+
+            self.params_h.write('const double motor_max_speeds[NUM_PROPS] = {')
+            for i in len(system.motor_locations):
+                self.params_h.write('{}'.format(system.motor_locations[i][3]))
+                if i != (len(system.motor_locations) - 1):
+                    self.params_h.write(', ')
+            self.params_h.write('};\n\n')
+
         elif system.type == 'rocket':
-            self.params_h.write('const double i_sp = 100.0;\n')
-            self.params_h.write('const double max_fuel = 100.0;\n')
-            self.params_h.write('const double mass_flow_rate = 10.0;\n\n')
+            self.params_h.write('const double i_sp = {};\n'.format(system.i_sp))
+            self.params_h.write('const double max_fuel = {};\n'.format(system.fuel_load))
+            self.params_h.write('const double mass_flow_rate = {};\n\n'.format(system.mass_flow))
 
         self.params_h.write('#endif\n')

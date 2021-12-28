@@ -19,10 +19,8 @@ dim_limits = {
     "plane": [76.3, 68.4, 19.4],
     # Set max size of a helicopter to a CH-47
     "helicopter": [30.2, 3.8, 5.7],
-    # Set max size of a missile to a Saturn V
-    "missile": [10.1, 10.1, 363.0],
-    # Set max size of a submarine to a Seawolf-class submarine
-    "submarine": [138.0, 10.9, 12.1]
+    # Set max size of a rocket to a Saturn V
+    "rocket": [10.1, 10.1, 363.0]
 }
 
 # Mass limits will be porportional to dimensions
@@ -33,10 +31,8 @@ mass_limits = {
     "plane": lambda x, y, z: x * y * z,
     # TODO: helicopter density
     "helicopter": lambda x, y, z: x * y * z,
-    # TODO: missile density
-    "missile": lambda x, y, z: x * y * z,
-    # Submarine cannot be denser than water
-    "submarine": lambda x, y, z: x * y * z
+    # TODO: rocket density
+    "rocket": lambda x, y, z: x * y * z
 }
 
 
@@ -52,7 +48,7 @@ class PhysicalSystem:
     sensor_locations = []
 
     # Whether to use JPL quaternion standard
-    jpl_quaternion = False
+    jpl_quaternion = True
 
     # Default type is rover, we can change to different types
     type = 'rover'
@@ -85,23 +81,37 @@ class Rover(PhysicalSystem):
         x = Decimal()
         y = Decimal()
         z = Decimal()
-        self.motor_locations.append([x, y, z])
-
-# TODO: Class with plane-specific attributes
-class Plane(PhysicalSystem):
-    pass
+        speed = Decimal()
+        self.motor_locations.append([x, y, z, speed])
 
 
 # TODO: Class with helicopter-specific attributes
 class Helicopter(PhysicalSystem):
-    pass
+    rotor_locations = []  # Only control surface for helicopters are rotors
 
+    # Add a new rotor in one of the octants
+    def add_rotor(self, octant=[0, 0, 0]):
+        x = Decimal()
+        y = Decimal()
+        z = Decimal()
+        thrust = Decimal()
+        self.rotor_locations.append([x, y, z, thrust])
 
-# TODO: Class with missile-specific attributes
-class Missile(PhysicalSystem):
-    pass
+# TODO: Class with plane-specific attributes
+class Plane(PhysicalSystem):
+    engine_locations = []
+    stall_speed = Decimal()  # Stall speed in level flight
+    max_speed = Decimal()    # Maximum speed in level flight
 
+    # Add a new engine in one of the octants
+    def add_rotor(self, octant=[0, 0, 0]):
+        x = Decimal()
+        y = Decimal()
+        z = Decimal()
+        self.engine_locations.append([x, y, z])
 
-# TODO: Class with submarine-specific attributes
-class Submarine(PhysicalSystem):
-    pass
+# TODO: Class with rocket-specific attributes
+class Rocket(PhysicalSystem):
+    i_sp = Decimal()       # Specific impulse
+    fuel_load = Decimal()  # Max propellant
+    mass_flow = Decimal()  # Mass flow rate out of nozzle
