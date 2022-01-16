@@ -4,13 +4,11 @@ import os
 class CodeGeneration:
     # File objects to write to
     params_h = None
-    autocode_h = None
     autocode_c = None
 
     # Initialize by opening files
     def __init__(self):
-        workdir = os.path.basename(os.getcwd())
-        output_dir = os.path.join(workdir, 'output')
+        output_dir = os.path.join(os.getcwd(), 'output')
 
         # Make output directory if needed
         try:
@@ -19,14 +17,16 @@ class CodeGeneration:
             pass
 
         self.params_h = open(os.path.join(output_dir, 'params.h'), 'w')
-        self.autocode_h = open(os.path.join(output_dir, 'autocode.h'), 'w')
         self.autocode_c = open(os.path.join(output_dir, 'autocode.cc'), 'w')
 
     # By closing files
     def __del__(self):
         self.params_h.close()
-        self.autocode_h.close()
         self.autocode_c.close()
+
+    def generate(self, system):
+        self.generate_params(system)
+        self.generate_autocode(system)
 
     def generate_params(self, system):
         self.params_h.write('/*\n')
@@ -39,7 +39,7 @@ class CodeGeneration:
         self.params_h.write('enum SystemType {SYS_ROVER, SYS_PLANE, SYS_ROCKET, SYS_HELICOPTER};\n')
 
         self.params_h.write('const double mass = {};\n'.format(system.mass))
-        self.params_h.write('const double dimensions[3] = { {}, {}, {} };\n\n'.format(
+        self.params_h.write('const double dimensions[3] = {{ {}, {}, {} }};\n\n'.format(
             system.dimensions[0], system.dimensions[1], system.dimensions[2]))
         self.params_h.write('const SystemType fsw_system = ')
 
@@ -52,11 +52,11 @@ class CodeGeneration:
         elif system.type == 'helicopter':
             self.params_h.write('SYS_HELICOPTER;\n\n')
 
-        if system.jpl_quaternion is True:
+        if system.software.jpl_quaternion is True:
             self.params_h.write('#define JPL_QUATERNION\n\n')
 
-        self.params_h.write('#define POS_MAX_ERROR 0.5\n')
-        self.params_h.write('#define SYS_PI acos(-1.0)\n\n')
+        self.params_h.write('#define POS_MAX_ERROR ' + system.software.pi_calculation + '\n')
+        self.params_h.write('#define SYS_PI ' + system.software.pi_calculation + '\n')
 
         self.params_h.write('#define ATT_MAX_ROLL_ANGLE 0.25 * SYS_PI\n')
         self.params_h.write('#define ATT_MAX_PITCH_ANGLE 0.25 * SYS_PI\n')
@@ -69,7 +69,7 @@ class CodeGeneration:
         self.params_h.write('#define ATT_MAX_PITCH 100\n')
         self.params_h.write('#define ATT_MAX_YAW 100\n\n')
 
-        self.params_h.write('#define CLOCK_TICKS_PER_SEC 100.0f\n\n')
+        self.params_h.write('#define CLOCK_TICKS_PER_SEC ' + str(system.software.cycles_hz) + '\n\n')
 
         if system.type == 'helicopter':
             self.params_h.write('#define NUM_PROPS {}\n'.format(len(system.rotor_locations)))
@@ -130,3 +130,81 @@ class CodeGeneration:
             self.params_h.write('const double mass_flow_rate = {};\n\n'.format(system.mass_flow))
 
         self.params_h.write('#endif\n')
+
+    def generate_autocode(self, system):
+        self.autocode_c.write('#include "autocode.h"\n\n')
+
+        self.autocode_c.write('#include "params.h"\n')
+        self.autocode_c.write('#include <cmath>\n')
+        self.autocode_c.write('#include <iostream>\n\n')
+
+        self.autocode_c.write('using namespace std;\n\n')
+
+        self.autocode_c.write('// Constants for use with the S-curve functions\n')
+        self.autocode_c.write('double pos_autocode_s_curve_constant_1;\n')
+        self.autocode_c.write('double pos_autocode_s_curve_constant_2;\n')
+        self.autocode_c.write('double pos_autocode_s_curve_constant_3;\n\n')
+
+        self.autocode_c.write('void seq_autocode_fit_s_curve(std::queue<SeqWaypoint> target) {\n')
+        self.autocode_c.write('  // TODO: examine curve fitting methods\n')
+        self.autocode_c.write('  pos_autocode_s_curve_constant_1 = 3.25f;\n')
+        self.autocode_c.write('  pos_autocode_s_curve_constant_2 = 2.5f;\n')
+        self.autocode_c.write('  pos_autocode_s_curve_constant_3 = 1.0f;\n')
+        self.autocode_c.write('}\n\n')
+
+        self.autocode_c.write('Vec3D pos_autocode_s_curve_derivative(Vec3D curr,\n'
+                              '                                      SeqWaypoint target) {\n')
+        self.autocode_c.write('  Vec3D ret;\n\n')
+
+        self.autocode_c.write('  // Do calculations\n')
+        self.autocode_c.write('  ret.x = pos_autocode_s_curve_constant_1 *\n'
+                              '          pos_autocode_s_curve_constant_2 * exp(\n'
+                              '          -1.0 * pos_autocode_s_curve_constant_1 * \n'
+                              '          (curr.x - pos_autocode_s_curve_constant_3)) /\n'
+                              '          pow(exp(-1.0 * pos_autocode_s_curve_constant_1 *'
+                              '          (curr.x - pos_autocode_s_curve_constant_3)) +\n'
+                              '             1, 2);\n')
+        self.autocode_c.write('  ret.y = pos_autocode_s_curve_constant_1 *\n'
+                              '          pos_autocode_s_curve_constant_2 * exp(\n'
+                              '          -1.0 * pos_autocode_s_curve_constant_1 * \n'
+                              '          (curr.x - pos_autocode_s_curve_constant_3)) /\n'
+                              '          pow(exp(-1.0 * pos_autocode_s_curve_constant_1 *'
+                              '          (curr.x - pos_autocode_s_curve_constant_3)) +\n'
+                              '             1, 2);\n')
+        self.autocode_c.write('  ret.z = pos_autocode_s_curve_constant_1 *\n'
+                              '          pos_autocode_s_curve_constant_2 * exp(\n'
+                              '          -1.0 * pos_autocode_s_curve_constant_1 * \n'
+                              '          (curr.x - pos_autocode_s_curve_constant_3)) /\n'
+                              '          pow(exp(-1.0 * pos_autocode_s_curve_constant_1 *'
+                              '          (curr.x - pos_autocode_s_curve_constant_3)) +\n'
+                              '             1, 2);\n')
+
+        self.autocode_c.write(' normalize(ret);\n\n')
+        self.autocode_c.write('  return ret;\n'
+                              '}\n\n')
+
+        self.autocode_c.write('double pos_autocode_get_max_speed() {\n')
+        self.autocode_c.write('  return 125.0;\n')
+        self.autocode_c.write('}\n\n')
+
+        self.autocode_c.write('Vec3D att_autocode_calculate_lean_angle'
+                              '(PosOutputData input_waypoint) {\n')
+        self.autocode_c.write('  Vec3D direction_euler = quat2vec(input_waypoint.rotation);\n\n')
+        self.autocode_c.write('  // Make sure none of the waypoints are above the maximum climb'
+                              'rate\n')
+        self.autocode_c.write('  if (direction_euler.x >= ATT_MAX_ROLL_ANGLE)\n'
+                              '    direction_euler.x = ATT_MAX_ROLL_ANGLE;\n'
+                              '  if (direction_euler.y >= ATT_MAX_PITCH_ANGLE)\n'
+                              '    direction_euler.y = ATT_MAX_PITCH_ANGLE;\n'
+                              '  if (direction_euler.z >= ATT_MAX_YAW_ANGLE)\n'
+                              '    direction_euler.z = ATT_MAX_YAW_ANGLE;\n\n')
+        self.autocode_c.write('  return direction_euler;\n'
+                              '}\n\n')
+
+        self.autocode_c.write('void servo_autocode_servo_move(PosOutputData input_waypoint) {\n')
+        self.autocode_c.write('  cout << "servo movement to (" <<\n'
+                              '     input_waypoint.position.x << ", " <<\n'
+                              '     input_waypoint.position.y << ", " <<\n'
+                              '     input_waypoint.position.z; <<\n'
+                              '     ")" << endl;\n')
+        self.autocode_c.write('}\n')
