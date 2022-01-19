@@ -76,6 +76,11 @@ class PhysicalSystem:
         new_location = [Decimal(), Decimal(), Decimal()]
         self.sensor_locations.push(new_location)
 
+    # Generate software system
+    def generate_software_system(self):
+        self.software.generate_lean_angles()
+        self.software.generate_max_speed(self.max_speed)
+
 
 # Class with rover-specific attributes
 class Rover(PhysicalSystem):
@@ -114,7 +119,6 @@ class Plane(PhysicalSystem):
 
     engine_locations = []
     stall_speed = Decimal()  # Stall speed in level flight
-    max_speed = Decimal()    # Maximum speed in level flight
 
     # Add a new engine in one of the octants
     def add_rotor(self, octant=[0, 0, 0]):

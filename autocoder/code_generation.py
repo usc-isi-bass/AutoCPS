@@ -141,9 +141,9 @@ class CodeGeneration:
         self.autocode_c.write('using namespace std;\n\n')
 
         self.autocode_c.write('// Constants for use with the S-curve functions\n')
-        self.autocode_c.write('double pos_autocode_s_curve_constant_1;\n')
-        self.autocode_c.write('double pos_autocode_s_curve_constant_2;\n')
-        self.autocode_c.write('double pos_autocode_s_curve_constant_3;\n\n')
+        self.autocode_c.write('double pos_autocode_s_curve_constant_1 = {};\n'.format(system.software.c_3_init))
+        self.autocode_c.write('double pos_autocode_s_curve_constant_2 = {};\n'.format(system.software.c_3_init))
+        self.autocode_c.write('double pos_autocode_s_curve_constant_3 = {};\n\n'.format(system.software.c_3_init))
 
         self.autocode_c.write('void seq_autocode_fit_s_curve(std::queue<SeqWaypoint> target) {\n')
         self.autocode_c.write('  // TODO: examine curve fitting methods\n')
@@ -179,28 +179,20 @@ class CodeGeneration:
                               '          (curr.x - pos_autocode_s_curve_constant_3)) +\n'
                               '             1, 2);\n')
 
-        self.autocode_c.write(' normalize(ret);\n\n')
+        self.autocode_c.write('  normalize(ret);\n\n')
         self.autocode_c.write('  return ret;\n'
                               '}\n\n')
 
         self.autocode_c.write('double pos_autocode_get_max_speed() {\n')
-        self.autocode_c.write('  return 125.0;\n')
+        self.autocode_c.write(system.software.max_speed_calc)
         self.autocode_c.write('}\n\n')
 
         self.autocode_c.write('Vec3D att_autocode_calculate_lean_angle'
                               '(PosOutputData input_waypoint) {\n')
-        self.autocode_c.write('  Vec3D direction_euler = quat2vec(input_waypoint.rotation);\n\n')
-        self.autocode_c.write('  // Make sure none of the waypoints are above the maximum climb'
-                              'rate\n')
-        self.autocode_c.write('  if (direction_euler.x >= ATT_MAX_ROLL_ANGLE)\n'
-                              '    direction_euler.x = ATT_MAX_ROLL_ANGLE;\n'
-                              '  if (direction_euler.y >= ATT_MAX_PITCH_ANGLE)\n'
-                              '    direction_euler.y = ATT_MAX_PITCH_ANGLE;\n'
-                              '  if (direction_euler.z >= ATT_MAX_YAW_ANGLE)\n'
-                              '    direction_euler.z = ATT_MAX_YAW_ANGLE;\n\n')
-        self.autocode_c.write('  return direction_euler;\n'
-                              '}\n\n')
+        self.autocode_c.write(system.software.lean_angle_calc)
+        self.autocode_c.write('}\n\n')
 
+        # Use default servo autocoding for movement
         self.autocode_c.write('void servo_autocode_servo_move(PosOutputData input_waypoint) {\n')
         self.autocode_c.write('  cout << "servo movement to (" <<\n'
                               '     input_waypoint.position.x << ", " <<\n'
