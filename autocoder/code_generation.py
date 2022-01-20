@@ -141,12 +141,15 @@ class CodeGeneration:
         self.autocode_c.write('using namespace std;\n\n')
 
         self.autocode_c.write('// Constants for use with the S-curve functions\n')
-        self.autocode_c.write('double pos_autocode_s_curve_constant_1 = {};\n'.format(system.software.c_3_init))
-        self.autocode_c.write('double pos_autocode_s_curve_constant_2 = {};\n'.format(system.software.c_3_init))
-        self.autocode_c.write('double pos_autocode_s_curve_constant_3 = {};\n\n'.format(system.software.c_3_init))
+        self.autocode_c.write('double pos_autocode_s_curve_constant_x_1 = {};\n'.format(system.software.c_1_init))
+        self.autocode_c.write('double pos_autocode_s_curve_constant_x_2 = {};\n'.format(system.software.c_2_init))
+        self.autocode_c.write('double pos_autocode_s_curve_constant_y_1 = {};\n'.format(system.software.c_1_init))
+        self.autocode_c.write('double pos_autocode_s_curve_constant_y_2 = {};\n'.format(system.software.c_2_init))
+        self.autocode_c.write('double pos_autocode_s_curve_constant_z_1 = {};\n'.format(system.software.c_1_init))
+        self.autocode_c.write('double pos_autocode_s_curve_constant_z_2 = {};\n'.format(system.software.c_2_init))
 
         self.autocode_c.write('void seq_autocode_fit_s_curve(std::queue<SeqWaypoint> target) {\n')
-        self.autocode_c.write('  // TODO: examine curve fitting methods\n')
+        self.autocode_c.write(system.software.curve_fit_calc)
         self.autocode_c.write('  pos_autocode_s_curve_constant_1 = 3.25f;\n')
         self.autocode_c.write('  pos_autocode_s_curve_constant_2 = 2.5f;\n')
         self.autocode_c.write('  pos_autocode_s_curve_constant_3 = 1.0f;\n')
@@ -155,33 +158,10 @@ class CodeGeneration:
         self.autocode_c.write('Vec3D pos_autocode_s_curve_derivative(Vec3D curr,\n'
                               '                                      SeqWaypoint target) {\n')
         self.autocode_c.write('  Vec3D ret;\n\n')
-
-        self.autocode_c.write('  // Do calculations\n')
-        self.autocode_c.write('  ret.x = pos_autocode_s_curve_constant_1 *\n'
-                              '          pos_autocode_s_curve_constant_2 * exp(\n'
-                              '          -1.0 * pos_autocode_s_curve_constant_1 * \n'
-                              '          (curr.x - pos_autocode_s_curve_constant_3)) /\n'
-                              '          pow(exp(-1.0 * pos_autocode_s_curve_constant_1 *'
-                              '          (curr.x - pos_autocode_s_curve_constant_3)) +\n'
-                              '             1, 2);\n')
-        self.autocode_c.write('  ret.y = pos_autocode_s_curve_constant_1 *\n'
-                              '          pos_autocode_s_curve_constant_2 * exp(\n'
-                              '          -1.0 * pos_autocode_s_curve_constant_1 * \n'
-                              '          (curr.x - pos_autocode_s_curve_constant_3)) /\n'
-                              '          pow(exp(-1.0 * pos_autocode_s_curve_constant_1 *'
-                              '          (curr.x - pos_autocode_s_curve_constant_3)) +\n'
-                              '             1, 2);\n')
-        self.autocode_c.write('  ret.z = pos_autocode_s_curve_constant_1 *\n'
-                              '          pos_autocode_s_curve_constant_2 * exp(\n'
-                              '          -1.0 * pos_autocode_s_curve_constant_1 * \n'
-                              '          (curr.x - pos_autocode_s_curve_constant_3)) /\n'
-                              '          pow(exp(-1.0 * pos_autocode_s_curve_constant_1 *'
-                              '          (curr.x - pos_autocode_s_curve_constant_3)) +\n'
-                              '             1, 2);\n')
-
+        self.autocode_c.write(system.software.s_curve_calc)
         self.autocode_c.write('  normalize(ret);\n\n')
-        self.autocode_c.write('  return ret;\n'
-                              '}\n\n')
+        self.autocode_c.write('  return ret;\n')
+        self.autocode_c.write('}\n\n')
 
         self.autocode_c.write('double pos_autocode_get_max_speed() {\n')
         self.autocode_c.write(system.software.max_speed_calc)

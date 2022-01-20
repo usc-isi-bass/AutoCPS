@@ -80,6 +80,8 @@ class PhysicalSystem:
     def generate_software_system(self):
         self.software.generate_lean_angles()
         self.software.generate_max_speed(self.max_speed)
+        self.software.generate_s_curve_nav()
+        self.software.generate_curve_fitter()
 
 
 # Class with rover-specific attributes
