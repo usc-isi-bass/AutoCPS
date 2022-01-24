@@ -58,16 +58,12 @@ class CodeGeneration:
         self.params_h.write('#define POS_MAX_ERROR ' + system.software.pi_calculation + '\n')
         self.params_h.write('#define SYS_PI ' + system.software.pi_calculation + '\n')
 
-        self.params_h.write('#define ATT_MAX_ROLL_ANGLE 0.25 * SYS_PI\n')
-        self.params_h.write('#define ATT_MAX_PITCH_ANGLE 0.25 * SYS_PI\n')
-        self.params_h.write('#define ATT_MAX_YAW_ANGLE 0.25 * SYS_PI\n\n')
+        self.params_h.write('#define ATT_MAX_ROLL_ANGLE ' + system.software.max_roll + '\n')
+        self.params_h.write('#define ATT_MAX_PITCH_ANGLE ' + system.software.max_pitch + '\n')
+        self.params_h.write('#define ATT_MAX_YAW_ANGLE ' + system.software.max_yaw + '\n\n')
 
-        self.params_h.write('#define ATT_MAX_ROTATION_RATE SYS_PI\n')
-        self.params_h.write('#define ATT_MAX_CLIMB_RATE 100\n\n')
-
-        self.params_h.write('#define ATT_MAX_ROLL 100\n')
-        self.params_h.write('#define ATT_MAX_PITCH 100\n')
-        self.params_h.write('#define ATT_MAX_YAW 100\n\n')
+        self.params_h.write('#define ATT_MAX_ROTATION_RATE ' + system.software.max_rotation + '\n')
+        self.params_h.write('#define ATT_MAX_CLIMB_RATE ' + system.software.max_climb + '\n\n')
 
         self.params_h.write('#define CLOCK_TICKS_PER_SEC ' + str(system.software.cycles_hz) + '\n\n')
 
@@ -146,7 +142,7 @@ class CodeGeneration:
         self.autocode_c.write('double pos_autocode_s_curve_constant_y_1 = {};\n'.format(system.software.c_1_init))
         self.autocode_c.write('double pos_autocode_s_curve_constant_y_2 = {};\n'.format(system.software.c_2_init))
         self.autocode_c.write('double pos_autocode_s_curve_constant_z_1 = {};\n'.format(system.software.c_1_init))
-        self.autocode_c.write('double pos_autocode_s_curve_constant_z_2 = {};\n'.format(system.software.c_2_init))
+        self.autocode_c.write('double pos_autocode_s_curve_constant_z_2 = {};\n\n'.format(system.software.c_2_init))
 
         self.autocode_c.write('void seq_autocode_fit_s_curve(std::queue<SeqWaypoint> target) {\n')
         self.autocode_c.write(system.software.curve_fit_calc)
@@ -158,7 +154,7 @@ class CodeGeneration:
         self.autocode_c.write('Vec3D pos_autocode_s_curve_derivative(Vec3D curr,\n'
                               '                                      SeqWaypoint target) {\n')
         self.autocode_c.write('  Vec3D ret;\n\n')
-        self.autocode_c.write(system.software.s_curve_calc)
+        self.autocode_c.write(system.software.s_curve_calc + '\n')
         self.autocode_c.write('  normalize(ret);\n\n')
         self.autocode_c.write('  return ret;\n')
         self.autocode_c.write('}\n\n')

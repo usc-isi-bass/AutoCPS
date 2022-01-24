@@ -54,7 +54,7 @@ class PhysicalSystem:
     type = 'system'
 
     # Configuration for software components
-    software = SoftwareSystem
+    software = SoftwareSystem(type)
 
     # Max system speed
     max_speed = Decimal()
@@ -62,6 +62,7 @@ class PhysicalSystem:
     # Constructor
     def __init__(self, system_type='system'):
         self.type = system_type
+        software = SoftwareSystem(self.type, sigmoid=1)
 
     # Randomly generate dimensions based on limits
     def generate_dimensions(self, lower_limit=[0.0, 0.0, 0.0],
@@ -78,7 +79,7 @@ class PhysicalSystem:
 
     # Generate software system
     def generate_software_system(self):
-        self.software.generate_lean_angles()
+        self.software.generate_lean_angles(self.max_speed)
         self.software.generate_max_speed(self.max_speed)
         self.software.generate_s_curve_nav()
         self.software.generate_curve_fitter()

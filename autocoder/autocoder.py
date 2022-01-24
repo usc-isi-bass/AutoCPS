@@ -18,6 +18,7 @@ def main():
     # Generate physical system
     physical_system = Helicopter()
     physical_system.generate_dimensions()
+    physical_system.generate_software_system()
 
     autocode = CodeGeneration()
     autocode.generate(physical_system)
