@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+### Sample autocoder CLI
+
 import argparse
 import os
 

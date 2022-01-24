@@ -62,15 +62,34 @@ class PhysicalSystem:
     # Constructor
     def __init__(self, system_type='system'):
         self.type = system_type
-        software = SoftwareSystem(self.type, sigmoid=1)
+        self.software = SoftwareSystem(self.type, sigmoid=1)
 
     # Randomly generate dimensions based on limits
-    def generate_dimensions(self, lower_limit=[0.0, 0.0, 0.0],
-                            upper_limit=[100.0, 100.0, 100.0]):
-        x = Decimal(random.uniform(upper_limit[0], lower_limit[0]))
-        y = Decimal(random.uniform(upper_limit[1], lower_limit[1]))
-        z = Decimal(random.uniform(upper_limit[2], lower_limit[2]))
-        self.dimensions = [x, y, z]
+    def generate_dimensions(self, dim=[-1.0, -1.0, -1.0], mass=-1):
+        if dim[0] <= 0 or dim[1] <= 0 or dim[2] <= 0:
+            x = Decimal(random.uniform(0, dim_limits[self.type][0]))
+            y = Decimal(random.uniform(0, dim_limits[self.type][1]))
+            z = Decimal(random.uniform(0, dim_limits[self.type][2]))
+            self.dimensions = [x, y, z]
+        else:
+            self.dimensions = dim
+
+        # Limit checking for dimensions
+        if self.dimensions[0] > dim_limits[self.type][0]:
+            self.dimensions[0] = dim_limits[self.type][0]
+        if self.dimensions[1] > dim_limits[self.type][1]:
+            self.dimensions[1] = dim_limits[self.type][1]
+        if self.dimensions[2] > dim_limits[self.type][2]:
+            self.dimensions[2] = dim_limits[self.type][2]
+
+        vol = self.dimensions[0] * self.dimensions[1] * self.dimensions[2]
+
+        # Volume * random density
+        if mass == -1:
+            density = random.uniform(0, density_limits[self.type])
+            mass = density
+        elif mass > density_limits[self.type] * vol:
+            mass = density_limits[self.type] * vol
 
     # Choose to add a sensor in a random octant of the space
     def add_sensor(self, octant=[0, 0, 0]):

@@ -168,7 +168,7 @@ class CodeGeneration:
         self.autocode_c.write(system.software.lean_angle_calc)
         self.autocode_c.write('}\n\n')
 
-        # Use default servo autocoding for movement
+        # Use default servo autocoding for movement, useful for testing later
         self.autocode_c.write('void servo_autocode_servo_move(PosOutputData input_waypoint) {\n')
         self.autocode_c.write('  cout << "servo movement to (" <<\n'
                               '     input_waypoint.position.x << ", " <<\n'
