@@ -1,11 +1,11 @@
 project(FakeFSW)
 cmake_minimum_required(VERSION 3.14)
 
-# We need link-time optimization so everything fits nicely in one binary
-# Also some functions can get inlined this way
+# Try to inline some functions for more binary analysis fun
 add_compile_options(-O3)
 
 add_library(datatypes datatypes.cpp)
+target_link_libraries(datatypes)
 
 add_library(stub stub.cpp)
 target_link_libraries(stub datatypes)

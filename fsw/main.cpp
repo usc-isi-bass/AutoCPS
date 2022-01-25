@@ -2,6 +2,7 @@
 
 #include "clock.h"
 #include "datatypes.h"
+#include "kalman.h"
 #include "seq.h"
 #include "servo_ctrl.h"
 #include "stub.h"
@@ -16,6 +17,9 @@ int main(int argc, char **argv) {
 
   // Get waypoints from an input file
   seq_create_waypoints(argv[1]);
+
+  // Initialize stuff as needed
+  kalman_init();
 
   // Execution loop
   while(true) {

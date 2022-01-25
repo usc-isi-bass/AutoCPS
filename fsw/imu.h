@@ -6,6 +6,7 @@
 // Output struct for an IMU
 struct ImuData {
   Vec3D gps_position;
+  Vec3D velocity;
   Vec3D accelerometer;
 };
 

@@ -12,20 +12,24 @@ Vec3D current_rotation, past_rotation;
 ImuData stub_imu_get_measurement(ImuUnit *unit) {
   ImuData ret;
   ReferenceFrame sensor_fr, system_fr;
-  Vec3D current_velocity;
+  Vec3D imu_location;
+  double delta_t = 1.0f / CLOCK_TICKS_PER_SEC / 60;
 
   system_fr = ivp_get_system_frame();
 
   // Calculate new GPS location
-  Vec3D imu_location = current_position + unit->position;
+  imu_location = current_position + unit->position;
   ret.gps_position = ivp_pos_convert_frame(imu_location, sensor_fr, system_fr);
 
+  // Calculate current velocity
+  ret.velocity = (current_position - imu_location) / delta_t;
+
   // Calculate new velocity as change in position over the last time frame
-  ret.accelerometer = current_velocity - past_v;
+  ret.accelerometer = (ret.velocity - past_v) / delta_t;
 
   // Update position
   past_position = current_position;
-  past_v = current_velocity;
+  past_v = ret.velocity;
 
   return ret;
 }

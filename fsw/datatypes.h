@@ -5,14 +5,6 @@
 #ifndef DATATYPES_H
 #define DATATYPES_H
 
-// Standard 2D vector
-struct Vec2D {
-  double x, y;
-  Vec2D operator+(Vec2D& a);
-  Vec2D operator-(Vec2D& a);
-  double operator*(Vec2D& a);
-};
-
 // Standard 3D vector
 struct Vec3D {
   double x, y, z;
@@ -37,12 +29,21 @@ struct ReferenceFrame {
   ReferenceFrame();
 };
 
+// 6x6 matrix for 3-dimensional attitude
+struct StateMatrix {
+  double v[6][6];
+  StateMatrix operator+(StateMatrix rhs);
+  StateMatrix operator-(StateMatrix rhs);
+  StateMatrix operator*(StateMatrix rhs);
+  StateMatrix operator*(double rhs);
+  StateMatrix transpose();
+};
+
 // Quaternion/Euler rotation conversions
 Quaternion vec2quat(Vec3D input);
 Vec3D quat2vec(Quaternion input);
 
 // Normalize vectors/quaternions
-Vec2D normalize(Vec2D input);
 Vec3D normalize(Vec3D input);
 Quaternion normalize(Quaternion input);
 

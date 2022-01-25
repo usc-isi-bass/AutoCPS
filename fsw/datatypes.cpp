@@ -7,29 +7,6 @@
 
 using namespace std;
 
-Vec2D Vec2D::operator+(Vec2D& a) {
-  Vec2D ret;
-
-  ret.x = this->x + a.x;
-  ret.y = this->y + a.y;
-
-  return ret;
-}
-
-Vec2D Vec2D::operator-(Vec2D& a) {
-  Vec2D ret;
-
-  ret.x = this->x - a.x;
-  ret.y = this->y - a.y;
-
-  return ret;
-}
-
-// Dot multiplication
-double Vec2D::operator*(Vec2D& a) {
-  return this->x * a.x + this->y * a.y;
-}
-
 Vec3D Vec3D::operator+(Vec3D a) {
   Vec3D ret;
 
@@ -120,6 +97,64 @@ ReferenceFrame::ReferenceFrame() {
   this->k.z = 1;
 }
 
+// Transpose a 6x6 matrix
+StateMatrix StateMatrix::transpose() {
+  StateMatrix ret;
+
+  for (int i = 0; i < 6; i++)
+    for (int it = 0; it < 6; it++)
+      ret.v[i][it] = this->v[it][i];
+
+  return ret;
+}
+
+// Matrix addition
+StateMatrix StateMatrix::operator+(StateMatrix rhs) {
+  StateMatrix ret;
+
+  for (int i = 0; i < 6; i++)
+    for (int it = 0; it < 6; it++)
+      ret.v[i][it] = this->v[i][it] + rhs.v[i][it];
+
+  return ret;
+}
+
+// Matrix subtraction
+StateMatrix StateMatrix::operator-(StateMatrix rhs) {
+  StateMatrix ret;
+
+  for (int i = 0; i < 6; i++)
+    for (int it = 0; it < 6; it++)
+      ret.v[i][it] = this->v[i][it] - rhs.v[i][it];
+
+  return ret;
+}
+
+// Matrix dot multiplication
+StateMatrix StateMatrix::operator*(StateMatrix rhs) {
+  StateMatrix ret;
+
+  for (int i = 0; i < 6; i++)
+    for (int it = 0; it < 6; it++) {
+      ret.v[i][it] = 0;
+      for (int iter = 0; iter < 6; iter++)
+        ret.v[i][it] += this->v[i][iter] * rhs.v[iter][it];
+    }
+
+  return ret;
+}
+
+// Matrix scalar multiplication
+StateMatrix StateMatrix::operator*(double rhs) {
+  StateMatrix ret;
+
+  for (int i = 0; i < 6; i++)
+    for (int it = 0; it < 6; it++)
+      ret.v[i][it] = this->v[it][i] * rhs;
+
+  return ret;
+}
+
 Quaternion vec2quat(Vec3D input) {
   Quaternion ret;
   double cy, sy, cp, sp, cr, sr;
@@ -164,20 +199,6 @@ Vec3D quat2vec(Quaternion input) {
   siny_cosp = 2 * (input.w * input.z + input.x * input.y);
   cosy_cosp = 1 - 2 * (input.y * input.y + input.z * input.z);
   ret.z = atan2(siny_cosp, cosy_cosp);
-
-  return ret;
-}
-
-Vec2D normalize(Vec2D input) {
-  Vec2D ret;
-  double mag;
-
-  // Calculate magnitude of vector
-  mag = sqrt(pow(input.x, 2) + pow(input.y, 2));
-
-  // Divide all by magnitude
-  ret.x = input.x / mag;
-  ret.y = input.y / mag;
 
   return ret;
 }
