@@ -5,7 +5,9 @@
 #include "imu.h"
 
 struct KalmanFilter {
-  double x;
+  Vec3D prev_position;
+  Vec3D prev_velocity;
+  Vec3D prev_accel;
 };
 
 // Pass IMU data through Kalman filter

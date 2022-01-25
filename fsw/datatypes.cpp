@@ -30,7 +30,7 @@ double Vec2D::operator*(Vec2D& a) {
   return this->x * a.x + this->y * a.y;
 }
 
-Vec3D Vec3D::operator+(Vec3D& a) {
+Vec3D Vec3D::operator+(Vec3D a) {
   Vec3D ret;
 
   ret.x = this->x + a.x;
@@ -55,8 +55,18 @@ double Vec3D::operator*(Vec3D& a) {
   return this->x * a.x + this->y * a.y + this->z * a.z;
 }
 
+Vec3D Vec3D::operator/(double a) {
+  Vec3D ret;
+
+  ret.x = this->x / a;
+  ret.y = this->y / a;
+  ret.z = this->z / a;
+
+  return ret;
+}
+
 // Scalar multiplication
-Vec3D Vec3D::operator*(double& a) {
+Vec3D Vec3D::operator*(double a) {
   Vec3D ret;
 
   ret.x = this->x * a;
