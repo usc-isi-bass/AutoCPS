@@ -106,10 +106,11 @@ class PhysicalSystem:
 
 # Class with rover-specific attributes
 class Rover(PhysicalSystem):
-    type = 'rover'
-
     # Only control surface for rovers are motors
     motor_locations = []
+
+    def __init__(self):
+        super().__init__(system_type='rover')
 
     # Add a new motor in one of the octants
     def add_motor(self, octant=[0, 0, 0]):
@@ -122,9 +123,10 @@ class Rover(PhysicalSystem):
 
 # TODO: Class with helicopter-specific attributes
 class Helicopter(PhysicalSystem):
-    type = 'helicopter'
-
     rotor_locations = []  # Only control surface for helicopters are rotors
+
+    def __init__(self):
+        super().__init__(system_type='helicopter')
 
     # Add a new rotor in one of the octants
     def add_rotor(self, octant=[0, 0, 0]):
@@ -137,10 +139,11 @@ class Helicopter(PhysicalSystem):
 
 # TODO: Class with plane-specific attributes
 class Plane(PhysicalSystem):
-    type = 'plane'
-
     engine_locations = []
     stall_speed = Decimal()  # Stall speed in level flight
+
+    def __init__(self):
+        super().__init__(system_type='plane')
 
     # Add a new engine in one of the octants
     def add_rotor(self, octant=[0, 0, 0]):
@@ -152,8 +155,9 @@ class Plane(PhysicalSystem):
 
 # TODO: Class with rocket-specific attributes
 class Rocket(PhysicalSystem):
-    type = 'rocket'
-
     i_sp = Decimal()       # Specific impulse
     fuel_load = Decimal()  # Max propellant
     mass_flow = Decimal()  # Mass flow rate out of nozzle
+
+    def __init__(self):
+        super().__init__(system_type='rocket')

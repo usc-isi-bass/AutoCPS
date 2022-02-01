@@ -3,13 +3,13 @@
 #include "autocode.h"
 
 #include <fstream>
-#include <queue>
+#include <deque>
 #include <sstream>
 
 using namespace std;
 
 // Waypoint queue
-std::queue<SeqWaypoint> seq_waypoints;
+std::deque<SeqWaypoint> seq_waypoints;
 
 // Push a new set of waypoints in from a file
 // This can simulate an autopilot or controller input
@@ -31,7 +31,7 @@ void seq_create_waypoints(const string filename) {
     input_stream >> input_waypoint.clock;
 
     // Add waypoint to the queue
-    seq_waypoints.push(input_waypoint);
+    seq_waypoints.push_back(input_waypoint);
   }
 
   // Fit the sequence of waypoints to an s-curve
@@ -45,7 +45,7 @@ SeqWaypoint seq_get_waypoint() {
 
 // Pop the last waypoint since we reached it already
 void seq_remove_waypoint() {
-  seq_waypoints.pop();
+  seq_waypoints.pop_front();
 }
 
 bool seq_has_waypoints() {

@@ -5,13 +5,18 @@ import random
 from decimal import Decimal
 from sympy import *
 
-# A set of sigmoid functions to choose from
 x, c_1, c_2 = symbols('x c_1 c_2')
+v_0, v_1 = symbols('v_0 v_1')
+
+# A set of sigmoid functions to choose from
 sigmoids = [(c_2 + exp(-1 * x)) ** (-1 * c_1), 
             c_1 * tanh(x) + c_2,
             c_1 * atan(x) + c_2,
-            x / (1 + abs(x) ** c_1) ** (-1 * c_2)]
+            x / (1 + abs(x) ** c_1) ** (-1 * c_2),
+            c_1 * x / (c_1 + abs(x))]
 
+# Dummy curve fitting equations
+curve_fitters = [v_0 * 360 / v_1]
 
 # Base class for all systems
 class SoftwareSystem:
@@ -29,6 +34,7 @@ class SoftwareSystem:
 
     # Sigmoid function variables
     sigmoid = ''
+    curve_fitter = ''
     c_1_init = '-1'
     c_2_init = '-1'
     s_curve_calc = ''
@@ -50,6 +56,8 @@ class SoftwareSystem:
             self.sigmoid = random.choice(sigmoids)
         else:
             self.sigmoid = sigmoid
+
+        self.curve_fitter = random.choice(curve_fitters)
 
     # Generate a calculation for lean angles
     def generate_lean_angles(self, max_speed):
@@ -81,6 +89,7 @@ class SoftwareSystem:
             self.max_speed_calc += '  double stall_speed = STALL_SPEED / sqrt(cos(direction_euler.x));\n'
             self.max_speed_calc += '  if (stall_speed > max_speed) return stall_speed;\n'
 
+    # Generate a sigmoid curve to navigate with
     def generate_s_curve_nav(self):
         derv = simplify(diff(self.sigmoid, x))
 
@@ -102,5 +111,33 @@ class SoftwareSystem:
 
             self.s_curve_calc += to_add + ';\n'
 
+    # Make a curve fitter
     def generate_curve_fitter(self):
-        pass
+        derv = simplify(self.curve_fitter)
+
+        self.curve_fit_calc += '  Vec3D v_0, v_1;\n'
+        self.curve_fit_calc += '  if (target.size() == 0) {\n'
+        self.curve_fit_calc += '    return;\n'
+        self.curve_fit_calc += '  } else if (target.size() > 1) {\n'
+        self.curve_fit_calc += '    v_0 = target[0].position;\n'
+        self.curve_fit_calc += '    v_1 = target[1].position;\n'
+        self.curve_fit_calc += '  } else if (target.size() == 1) {\n'
+        self.curve_fit_calc += '    v_0 = target[0].position;\n'
+        self.curve_fit_calc += '    v_1 = v_0;\n'
+        self.curve_fit_calc += '  }\n\n'
+
+        for var in ['x', 'y', 'z']:
+            # Replace a and x with required variables
+            to_add = str(ccode(derv)).replace(
+                'x', 'pos_autocode_s_curve_constant_{}_1'.format(var)
+            ).replace(
+                'v_0', 'v_0.{}'.format(var)
+            ).replace(
+                'v_1', 'v_1.{}'.format(var)
+            )
+
+            self.curve_fit_calc += '  pos_autocode_s_curve_constant_' + var + '_1 = '
+            self.curve_fit_calc += to_add + ';\n'
+
+            self.curve_fit_calc += '  pos_autocode_s_curve_constant_' + var + '_2 = '
+            self.curve_fit_calc += to_add + ';\n'

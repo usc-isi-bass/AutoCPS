@@ -54,7 +54,9 @@ double att_calculate_speed(PosOutputData input_waypoint) {
   if (ret > MAX_SPEED) ret = MAX_SPEED;
 
   // If not calculate minimum speed needed
+#ifdef SYS_IS_PLANE
   if (ret < STALL_SPEED) ret = STALL_SPEED;
-
+#endif
+  
   return ret;
 }

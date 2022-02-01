@@ -1,6 +1,6 @@
 import os
 
-# Base class to generate an autocoded params.h and autocode lib
+# Base class to generate an autocoded params.h and autocode.o
 class CodeGeneration:
     # File objects to write to
     params_h = None
@@ -17,7 +17,7 @@ class CodeGeneration:
             pass
 
         self.params_h = open(os.path.join(output_dir, 'params.h'), 'w')
-        self.autocode_c = open(os.path.join(output_dir, 'autocode.cc'), 'w')
+        self.autocode_c = open(os.path.join(output_dir, 'autocode.cpp'), 'w')
 
     # By closing files
     def __del__(self):
@@ -57,6 +57,7 @@ class CodeGeneration:
 
         self.params_h.write('#define POS_MAX_ERROR ' + system.software.pi_calculation + '\n')
         self.params_h.write('#define SYS_PI ' + system.software.pi_calculation + '\n')
+        self.params_h.write('#define CLOCK_TICKS_PER_SEC ' + str(system.software.cycles_hz) + '\n\n')
 
         self.params_h.write('#define ATT_MAX_ROLL_ANGLE ' + system.software.max_roll + '\n')
         self.params_h.write('#define ATT_MAX_PITCH_ANGLE ' + system.software.max_pitch + '\n')
@@ -65,13 +66,14 @@ class CodeGeneration:
         self.params_h.write('#define ATT_MAX_ROTATION_RATE ' + system.software.max_rotation + '\n')
         self.params_h.write('#define ATT_MAX_CLIMB_RATE ' + system.software.max_climb + '\n\n')
 
-        self.params_h.write('#define CLOCK_TICKS_PER_SEC ' + str(system.software.cycles_hz) + '\n\n')
+        self.params_h.write('#define MAX_SPEED {}\n\n'.format(system.max_speed))
 
         if system.type == 'helicopter':
+            self.params_h.write('#define SYS_IS_HELICOPTER\n\n')
             self.params_h.write('#define NUM_PROPS {}\n'.format(len(system.rotor_locations)))
 
             self.params_h.write('const double PROPELLERS[NUM_PROPS][3] = {')
-            for i in len(system.rotor_locations):
+            for i in range(len(system.rotor_locations)):
                 self.params_h.write('{ {}, {}, {} }'.format(system.rotor_locations[i][0],
                                                             system.rotor_locations[i][1],
                                                             system.rotor_locations[i][2]))
@@ -80,17 +82,18 @@ class CodeGeneration:
             self.params_h.write('};\n')
 
             self.params_h.write('const double PROP_THRUSTS[NUM_PROPS] = {')
-            for i in len(system.rotor_locations):
+            for i in range(len(system.rotor_locations)):
                 self.params_h.write('{}'.format(system.rotor_locations[i][3]))
                 if i != (len(system.rotor_locations) - 1):
                     self.params_h.write(', ')
             self.params_h.write('};\n\n')
 
         elif system.type == 'plane':
+            self.params_h.write('#define SYS_IS_PLANE\n\n')
             self.params_h.write('#define NUM_ENGINES {}\n'.format(len(system.engine_locations)))
 
             self.params_h.write('const double engines[NUM_ENGINES][3] = {')
-            for i in len(system.engine_locations):
+            for i in range(len(system.engine_locations)):
                 self.params_h.write('{ {}, {}, {} }'.format(system.engine_locations[i][0],
                                                             system.engine_locations[i][1],
                                                             system.engine_locations[i][2]))
@@ -99,13 +102,13 @@ class CodeGeneration:
             self.params_h.write('};\n')
 
             self.params_h.write('#define STALL_SPEED {}\n'.format(system.stall_speed))
-            self.params_h.write('#define MAX_SPEED {}\n\n'.format(system.max_speed))
 
         elif system.type == 'rover':
-            self.params_h.write('#define NUM_MOTORS {}\n'.format(len(system.rotor_locations)))
+            self.params_h.write('#define SYS_IS_ROVER\n\n')
+            self.params_h.write('#define NUM_MOTORS {}\n'.format(len(system.motor_locations)))
 
-            self.params_h.write('const double motors[NUM_PROPS][3] = {')
-            for i in len(system.motor_locations):
+            self.params_h.write('const double motors[NUM_MOTORS][3] = {')
+            for i in range(len(system.motor_locations)):
                 self.params_h.write('{ {}, {}, {} }'.format(system.motor_locations[i][0],
                                                             system.motor_locations[i][1],
                                                             system.motor_locations[i][2]))
@@ -113,14 +116,15 @@ class CodeGeneration:
                     self.params_h.write(', ')
             self.params_h.write('};\n')
 
-            self.params_h.write('const double motor_max_speeds[NUM_PROPS] = {')
-            for i in len(system.motor_locations):
+            self.params_h.write('const double motor_max_speeds[NUM_MOTORS] = {')
+            for i in range(len(system.motor_locations)):
                 self.params_h.write('{}'.format(system.motor_locations[i][3]))
                 if i != (len(system.motor_locations) - 1):
                     self.params_h.write(', ')
             self.params_h.write('};\n\n')
 
         elif system.type == 'rocket':
+            self.params_h.write('#define SYS_IS_ROCKET\n\n')
             self.params_h.write('const double i_sp = {};\n'.format(system.i_sp))
             self.params_h.write('const double max_fuel = {};\n'.format(system.fuel_load))
             self.params_h.write('const double mass_flow_rate = {};\n\n'.format(system.mass_flow))
@@ -144,11 +148,8 @@ class CodeGeneration:
         self.autocode_c.write('double pos_autocode_s_curve_constant_z_1 = {};\n'.format(system.software.c_1_init))
         self.autocode_c.write('double pos_autocode_s_curve_constant_z_2 = {};\n\n'.format(system.software.c_2_init))
 
-        self.autocode_c.write('void seq_autocode_fit_s_curve(std::queue<SeqWaypoint> target) {\n')
+        self.autocode_c.write('void seq_autocode_fit_s_curve(std::deque<SeqWaypoint> target) {\n')
         self.autocode_c.write(system.software.curve_fit_calc)
-        self.autocode_c.write('  pos_autocode_s_curve_constant_1 = 3.25f;\n')
-        self.autocode_c.write('  pos_autocode_s_curve_constant_2 = 2.5f;\n')
-        self.autocode_c.write('  pos_autocode_s_curve_constant_3 = 1.0f;\n')
         self.autocode_c.write('}\n\n')
 
         self.autocode_c.write('Vec3D pos_autocode_s_curve_derivative(Vec3D curr,\n'
@@ -173,6 +174,6 @@ class CodeGeneration:
         self.autocode_c.write('  cout << "servo movement to (" <<\n'
                               '     input_waypoint.position.x << ", " <<\n'
                               '     input_waypoint.position.y << ", " <<\n'
-                              '     input_waypoint.position.z; <<\n'
+                              '     input_waypoint.position.z <<\n'
                               '     ")" << endl;\n')
         self.autocode_c.write('}\n')

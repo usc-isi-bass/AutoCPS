@@ -5,9 +5,9 @@
 #include "pos_ctrl.h"
 #include "seq.h"
 
-#include <queue>
+#include <deque>
 
-void seq_autocode_fit_s_curve(std::queue<SeqWaypoint> target);
+void seq_autocode_fit_s_curve(std::deque<SeqWaypoint> target);
 
 Vec3D pos_autocode_s_curve_derivative(Vec3D curr, SeqWaypoint target);
 
