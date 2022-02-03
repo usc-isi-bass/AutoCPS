@@ -1,5 +1,6 @@
 #include "stub.h"
 
+#include "autocode.h"
 #include "ivp.h"
 #include "params.h"
 
@@ -53,4 +54,8 @@ SensorData stub_sensor_get_measurement(SensorUnit *unit) {
   past_v = current_velocity;
 
   return ret;
+}
+
+void stub_servo_move(PosOutputData input_waypoint) {
+  servo_autocode_servo_move(input_waypoint);
 }
