@@ -49,6 +49,11 @@ class SoftwareSystem:
     max_rotation = 'SYS_PI'
     max_climb = '15'
 
+    autonav_enable = 1
+    imu_enable = 1
+    kalman_enable = 1
+    sensor_enable = 1
+
     # Constructor and assigning a sigmoid curve
     def __init__(self, system_type, sigmoid=-1):
         self.system_type = system_type

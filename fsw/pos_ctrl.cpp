@@ -76,13 +76,23 @@ void pos_add_imu(ImuUnit *imu) {
 PosOutputData pos_get_current_location() {
   PosOutputData ret;
   Vec3D estim_loc;
+  Quaternion estim_rot;
 
   // Average them out i guess?
+#if SENSOR_ENABLE == 1
   for (size_t i = 0; i < pos_sensor_count; i++) {
-    ivp_get_sensor_position(pos_sensor_list[pos_sensor_count]);
+    estim_loc = estim_loc + ivp_get_sensor_position(pos_sensor_list[i]);
+    estim_rot = estim_rot;
   }
+#endif
 
+#if IMU_ENABLE == 1
   for (size_t i = 0; i < pos_imu_count; i++) {
-
+    estim_loc = estim_loc + ivp_get_imu_position(pos_imu_list[i]);
   }
+#endif
+
+  ret.position = estim_loc / (pos_imu_count + pos_sensor_count);
+  ret.rotation = estim_rot;
+  return ret;
 }

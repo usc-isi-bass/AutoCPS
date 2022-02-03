@@ -27,7 +27,7 @@ Vec3D ivp_get_sensor_position(SensorUnit *sensor);
 Quaternion ivp_get_sensor_rotation(SensorUnit *sensor);
 
 Vec3D ivp_get_imu_position(ImuUnit *sensor);
-Quaternion ivp_get_imu_rotation(ImuUnit *sensor);
+Quaternion ivp_get_imu_heading(ImuUnit *sensor);
 
 ReferenceFrame ivp_get_system_frame();
 void ivp_set_system_frame(ReferenceFrame &ref);

@@ -55,6 +55,11 @@ class CodeGeneration:
         if system.software.jpl_quaternion is True:
             self.params_h.write('#define JPL_QUATERNION\n\n')
 
+        self.params_h.write('#define AUTONAV_ENABLE {}\n'.format(system.software.autonav_enable))
+        self.params_h.write('#define IMU_ENABLE {}\n'.format(system.software.autonav_enable))
+        self.params_h.write('#define KALMAN_ENABLE {}\n'.format(system.software.autonav_enable))
+        self.params_h.write('#define SENSOR_ENABLE {}\n\n'.format(system.software.autonav_enable))
+
         self.params_h.write('#define POS_MAX_ERROR ' + system.software.pi_calculation + '\n')
         self.params_h.write('#define SYS_PI ' + system.software.pi_calculation + '\n')
         self.params_h.write('#define CLOCK_TICKS_PER_SEC ' + str(system.software.cycles_hz) + '\n\n')

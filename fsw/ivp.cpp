@@ -58,14 +58,21 @@ Quaternion ivp_rot_convert_frame(Quaternion coordinate,
 }
 
 Vec3D ivp_get_sensor_position(SensorUnit *sensor) {
+#if SENSOR_ENABLE == 1
   SensorData sensor_data = sensor_get_data(sensor);
 
   return ivp_pos_convert_frame(sensor_data.output_position,
                                sensor->sensor_frame,
                                system_frame);
+#else
+  // Return empty
+  Vec3D ret;
+  return ret;
+#endif
 }
 
 Quaternion ivp_get_sensor_rotation(SensorUnit *sensor) {
+#if SENSOR_ENABLE == 1
   SensorData sensor_data;
   Quaternion sensor_rotation;
 
@@ -74,19 +81,39 @@ Quaternion ivp_get_sensor_rotation(SensorUnit *sensor) {
   return ivp_rot_convert_frame(sensor_rotation,
                                sensor->sensor_frame,
                                system_frame);
+#else
+  // Return empty
+  Quaternion ret;
+  return ret;
+#endif
 }
 
-Vec3D ivp_get_imu_position(ImuUnit *imu) {
-  ImuData imu_data = imu_get_measurement(imu);
+Vec3D ivp_get_imu_position(ImuUnit *sensor) {
+#if IMU_ENABLE == 1
+  ImuData imu_data = imu_get_measurement(sensor);
 
   return ivp_pos_convert_frame(imu_data.gps_position,
-                               imu->imu_frame,
+                               sensor->imu_frame,
                                system_frame);
-
+#else
+  // Return empty
+  Vec3D ret;
+  return ret;
+#endif
 }
 
-Quaternion ivp_get_imu_rotation(ImuUnit *sensor) {
+Quaternion ivp_get_imu_heading(ImuData *sensor) {
+#if IMU_ENABLE == 1
+  ImuData sensor_data = imu_get_measurement(sensor);
 
+  return vec2quat(ivp_pos_convert_frame(sensor_data.output_rotation,
+                                        sensor->sensor_frame,
+                                        system_frame));
+#else
+  // Return empty
+  Quaternion ret;
+  return ret;
+#endif
 }
 
 ReferenceFrame ivp_get_system_frame() {

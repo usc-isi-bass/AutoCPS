@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "att_ctrl.h"
 #include "clock.h"
 #include "datatypes.h"
 #include "kalman.h"
@@ -31,9 +32,16 @@ int main(int argc, char **argv) {
     cout << "Location: {" << curr_pos.position.x << ", " <<
                  curr_pos.position.y << ", " << curr_pos.position.z << "}" <<
                  endl;
-    cout << endl;
 
-    servo_move(pos_get_next_location());
+    PosOutputData next_pos = pos_get_next_location();
+
+    cout << "Heading: {" << att_calculate_roll(next_pos) << ", " << att_calculate_pitch(next_pos)
+         << ", " << att_calculate_yaw(next_pos) << "}" << endl;
+    cout << "Throttle: " << att_calculate_throttle(next_pos) << endl;
+
+    servo_move(next_pos);
+
+    cout << endl;
   }
 
   return 0;

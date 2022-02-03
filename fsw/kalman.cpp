@@ -30,6 +30,8 @@ void kalman_init() {
 
 ImuData kalman_normalize_input(ImuData &input) {
   ImuData estimate;
+
+#if KALMAN_ENABLE == 1
   StateMatrix covariance_pred, kalman_gain, measurement_matrix, temp;
   Vec3D estimate_velocity;
 
@@ -70,6 +72,9 @@ ImuData kalman_normalize_input(ImuData &input) {
   temp = (identity_matrix - kalman_gain);
   last_cov_matrix = temp * last_cov_matrix * temp.transpose() +
     kalman_gain * uncertainty_matrix * kalman_gain.transpose();
+#else
+  estimate = input;
+#endif
 
   return estimate;
 }
