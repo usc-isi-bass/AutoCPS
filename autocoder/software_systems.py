@@ -16,7 +16,16 @@ sigmoids = [(c_2 + exp(-1 * x)) ** (-1 * c_1),
             c_1 * x / (c_1 + abs(x))]
 
 # Dummy curve fitting equations
-curve_fitters = [v_0 * 360 / v_1]
+curve_fitters = [v_0 * 360 / v_1,
+                 v_0 * v_1 ** 2,
+                 v_1 ** 2 + 105,
+                 (v_1 + v_0) / 100]
+
+# Different ways to calculate Pi
+pi_calculation = ['acos(-1.0',
+                  '2 * asin(1.0)',
+                  '4 * atan(1.0)',
+                  '3.14159f']
 
 # Base class for all systems
 class SoftwareSystem:
@@ -27,7 +36,7 @@ class SoftwareSystem:
     cycles_hz = 120
 
     # Definition for Pi
-    pi_calculation = 'acos(-1.0)'
+    pi_calculation = random.choice(pi_calculation)
 
     # Whether to use JPL quaternion standard
     jpl_quaternion = True

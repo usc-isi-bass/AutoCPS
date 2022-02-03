@@ -7,33 +7,40 @@
 using namespace std;
 
 // Constants for use with the S-curve functions
-double pos_autocode_s_curve_constant_1;
-double pos_autocode_s_curve_constant_2;
-double pos_autocode_s_curve_constant_3;
+double pos_autocode_s_curve_constant_x_1 = -1;
+double pos_autocode_s_curve_constant_x_2 = -1;
+double pos_autocode_s_curve_constant_y_1 = -1;
+double pos_autocode_s_curve_constant_y_2 = -1;
+double pos_autocode_s_curve_constant_z_1 = -1;
+double pos_autocode_s_curve_constant_z_2 = -1;
 
-void seq_autocode_fit_s_curve(std::queue<SeqWaypoint> target) {
-  // TODO: examine curve fitting methods
-  pos_autocode_s_curve_constant_1 = 3.25f;
-  pos_autocode_s_curve_constant_2 = 2.5f;
-  pos_autocode_s_curve_constant_3 = 1.0f;
+void seq_autocode_fit_s_curve(std::deque<SeqWaypoint> target) {
+  Vec3D v_0, v_1;
+  if (target.size() == 0) {
+    return;
+  } else if (target.size() > 1) {
+    v_0 = target[0].position;
+    v_1 = target[1].position;
+  } else if (target.size() == 1) {
+    v_0 = target[0].position;
+    v_1 = v_0;
+  }
+
+  pos_autocode_s_curve_constant_x_1 = (1.0/100.0)*v_0.x + (1.0/100.0)*v_1.x;
+  pos_autocode_s_curve_constant_x_2 = (1.0/100.0)*v_0.x + (1.0/100.0)*v_1.x;
+  pos_autocode_s_curve_constant_y_1 = (1.0/100.0)*v_0.y + (1.0/100.0)*v_1.y;
+  pos_autocode_s_curve_constant_y_2 = (1.0/100.0)*v_0.y + (1.0/100.0)*v_1.y;
+  pos_autocode_s_curve_constant_z_1 = (1.0/100.0)*v_0.z + (1.0/100.0)*v_1.z;
+  pos_autocode_s_curve_constant_z_2 = (1.0/100.0)*v_0.z + (1.0/100.0)*v_1.z;
 }
 
-Vec3D pos_autocode_s_curve_derivative(Vec3D curr, SeqWaypoint target) {
+Vec3D pos_autocode_s_curve_derivative(Vec3D curr,
+                                      SeqWaypoint target) {
   Vec3D ret;
 
-  // Do calculations
-  ret.x = pos_autocode_s_curve_constant_1 * pos_autocode_s_curve_constant_2 * exp(
-          -1.0 * pos_autocode_s_curve_constant_1 * (curr.x - pos_autocode_s_curve_constant_3)) /
-         pow(exp(-1.0 * pos_autocode_s_curve_constant_1 * (curr.x - pos_autocode_s_curve_constant_3)) +
-            1, 2);
-  ret.y = pos_autocode_s_curve_constant_1 * pos_autocode_s_curve_constant_2 * exp(
-          -1.0 * pos_autocode_s_curve_constant_1 * (curr.y - pos_autocode_s_curve_constant_3)) /
-         pow(exp(-1.0 * pos_autocode_s_curve_constant_1 * (curr.y - pos_autocode_s_curve_constant_3)) +
-            1, 2);
-  ret.z = pos_autocode_s_curve_constant_1 * pos_autocode_s_curve_constant_2 * exp(
-          -1.0 * pos_autocode_s_curve_constant_1 * (curr.z - pos_autocode_s_curve_constant_3)) /
-         pow(exp(-1.0 * pos_autocode_s_curve_constant_1 * (curr.z - pos_autocode_s_curve_constant_3)) +
-            1, 2);
+  ret.x = 0;
+  ret.y = 0;
+  ret.z = 0;
 
   normalize(ret);
 
@@ -41,25 +48,18 @@ Vec3D pos_autocode_s_curve_derivative(Vec3D curr, SeqWaypoint target) {
 }
 
 double pos_autocode_get_max_speed() {
-  return 125.0;
+  double max_speed = 0;
 }
 
 Vec3D att_autocode_calculate_lean_angle(PosOutputData input_waypoint) {
   Vec3D direction_euler = quat2vec(input_waypoint.rotation);
-
-  // Make sure none of the waypoints are above the maximum climb rate
-  if (direction_euler.x >= ATT_MAX_ROLL_ANGLE)
-    direction_euler.x = ATT_MAX_ROLL_ANGLE;
-  if (direction_euler.y >= ATT_MAX_PITCH_ANGLE)
-    direction_euler.y = ATT_MAX_PITCH_ANGLE;
-  if (direction_euler.z >= ATT_MAX_YAW_ANGLE)
-    direction_euler.z = ATT_MAX_YAW_ANGLE;
-
   return direction_euler;
 }
 
 void servo_autocode_servo_move(PosOutputData input_waypoint) {
-  cout << "servo movement to (" << input_waypoint.position.x << ", ";
-  cout << input_waypoint.position.y << ", " << input_waypoint.position.z;
-  cout << ")" << endl;
+  cout << "servo movement to (" <<
+     input_waypoint.position.x << ", " <<
+     input_waypoint.position.y << ", " <<
+     input_waypoint.position.z <<
+     ")" << endl;
 }

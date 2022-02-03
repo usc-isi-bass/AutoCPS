@@ -10,49 +10,35 @@
 #include <cmath>
 
 enum SystemType {SYS_ROVER, SYS_PLANE, SYS_ROCKET, SYS_HELICOPTER};
+const double mass = 0;
+const double dimensions[3] = { 2.068412517105086667612567907781340181827545166015625, 0.54892801619274445013019203543080948293209075927734375, 0.694307078359269969070055594784207642078399658203125 };
 
-// Global
-const double mass = 125.0;
-const double dimensions[3] = {0.0, 0.0, 0.0};
 const SystemType fsw_system = SYS_ROVER;
 
 #define JPL_QUATERNION
 
-#define POS_MAX_ERROR 0.5
-#define SYS_PI acos(-1.0)
+#define AUTONAV_ENABLE 1
+#define IMU_ENABLE 1
+#define KALMAN_ENABLE 1
+#define SENSOR_ENABLE 1
+
+#define POS_MAX_ERROR 2 * asin(1.0)
+#define SYS_PI 2 * asin(1.0)
+#define CLOCK_TICKS_PER_SEC 120
 
 #define ATT_MAX_ROLL_ANGLE 0.25 * SYS_PI
 #define ATT_MAX_PITCH_ANGLE 0.25 * SYS_PI
 #define ATT_MAX_YAW_ANGLE 0.25 * SYS_PI
 
 #define ATT_MAX_ROTATION_RATE SYS_PI
-#define ATT_MAX_CLIMB_RATE 100
+#define ATT_MAX_CLIMB_RATE 15
 
-#define ATT_MAX_ROLL 100
-#define ATT_MAX_PITCH 100
-#define ATT_MAX_YAW 100
+#define MAX_SPEED 0
 
-#define CLOCK_TICKS_PER_SEC 100.0f
+#define SYS_IS_ROVER
 
-// Plane-only
-#define NUM_ENGINES 2
-const double engines[NUM_ENGINES][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
-#define STALL_SPEED 10
-#define MAX_SPEED 100
-
-// Rover-only
-#define NUM_MOTORS 2
-const double motors[NUM_ENGINES][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
-const double motor_max_speeds[NUM_ENGINES] = {0.0, 0.0};
-
-// Rocket-only
-const double i_sp = 100.0;
-const double max_fuel = 100.0;
-const double mass_flow_rate = 10.0;
-
-// Helicopter-only
-#define NUM_PROPS 2
-const double PROPELLERS[NUM_PROPS][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
-const double PROP_THRUSTS[NUM_PROPS] = {0.0, 0.0};
+#define NUM_MOTORS 0
+const double motors[NUM_MOTORS][3] = {};
+const double motor_max_speeds[NUM_MOTORS] = {};
 
 #endif

@@ -102,12 +102,12 @@ Vec3D ivp_get_imu_position(ImuUnit *sensor) {
 #endif
 }
 
-Quaternion ivp_get_imu_heading(ImuData *sensor) {
+Quaternion ivp_get_imu_heading(ImuUnit *sensor) {
 #if IMU_ENABLE == 1
   ImuData sensor_data = imu_get_measurement(sensor);
 
-  return vec2quat(ivp_pos_convert_frame(sensor_data.output_rotation,
-                                        sensor->sensor_frame,
+  return vec2quat(ivp_pos_convert_frame(sensor_data.gps_position,
+                                        sensor->imu_frame,
                                         system_frame));
 #else
   // Return empty
