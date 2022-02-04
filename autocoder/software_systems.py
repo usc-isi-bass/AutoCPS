@@ -12,8 +12,7 @@ v_0, v_1 = symbols('v_0 v_1')
 sigmoids = [(c_2 + exp(-1 * x)) ** (-1 * c_1), 
             c_1 * tanh(x) + c_2,
             c_1 * atan(x) + c_2,
-            x / (1 + abs(x) ** c_1) ** (-1 * c_2),
-            c_1 * x / (c_1 + abs(x))]
+            (c_1 * atan(x) + c_2) / c_1,]
 
 # Dummy curve fitting equations
 curve_fitters = [v_0 * 360 / v_1,
@@ -75,10 +74,6 @@ class SoftwareSystem:
 
     # Generate a calculation for lean angles
     def generate_lean_angles(self, max_speed):
-        print('Generating lean angles...')
-        print('Max speed: ' + str(max_speed))
-        print()
-
         self.lean_angle_calc += '  Vec3D direction_euler = quat2vec(input_waypoint.rotation);\n'
         self.lean_angle_calc += ''
 
@@ -92,10 +87,6 @@ class SoftwareSystem:
 
     # Generate a calculation for max speed
     def generate_max_speed(self, max_speed):
-        print('Generating max speed...')
-        print('Max speed: ' + str(max_speed))
-        print()
-
         self.max_speed_calc += '  double max_speed = {};\n'.format(max_speed)
 
         # Check for stall speed if plane
@@ -105,11 +96,9 @@ class SoftwareSystem:
 
     # Generate a sigmoid curve to navigate with
     def generate_s_curve_nav(self):
-        derv = simplify(diff(self.sigmoid, x))
+        self.sigmoid = random.choice(sigmoids)
 
-        print('Generating S-curve for navigation...')
-        print(str(ccode(derv)))
-        print()
+        derv = simplify(diff(self.sigmoid, x))
 
         for var in ['x', 'y', 'z']:
             self.s_curve_calc += '  ret.' + var + ' = '

@@ -86,10 +86,12 @@ class PhysicalSystem:
 
         # Volume * random density
         if mass == -1:
-            density = random.uniform(0, density_limits[self.type])
-            mass = density
+            density = Decimal(random.uniform(0, density_limits[self.type]))
+            self.mass = density * vol
         elif mass > density_limits[self.type] * vol:
-            mass = density_limits[self.type] * vol
+            self.mass = density_limits[self.type] * vol
+        else:
+            self.mass = mass
 
     # Choose to add a sensor in a random octant of the space
     def add_sensor(self, octant=[0, 0, 0]):

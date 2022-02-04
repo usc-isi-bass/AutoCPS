@@ -39,6 +39,9 @@ def main():
     print('System dimensions:')
     print(physical_system.dimensions)
 
+    print('System mass:')
+    print(physical_system.mass)
+
 
 if __name__ == "__main__":
     main()
