@@ -5,7 +5,7 @@
 import argparse
 import os
 
-from physical_systems import Helicopter, Plane, Rocket, Rover, PhysicalSystem
+from physical_systems import Helicopter, Plane, Rocket, Rover, Submarine, PhysicalSystem
 from software_systems import SoftwareSystem
 from code_generation import CodeGeneration
 
@@ -29,6 +29,10 @@ def main():
         physical_system = Plane()
     elif args.vehicle_type == 'rocket':
         physical_system = Rocket()
+    elif args.vehicle_type == 'submarine':
+        physical_system = Submarine()
+    else:
+        physical_system = PhysicalSystem()
 
     physical_system.generate_dimensions()
     physical_system.generate_software_system()

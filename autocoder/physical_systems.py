@@ -15,6 +15,8 @@ from software_systems import SoftwareSystem
 
 # Add dimensional limits for each vehicle, in meters
 dim_limits = {
+    # Generic systems are arbitraily large
+    "system": [],
     # Set max size of a rover to dimensions of Perseverance
     "rover": [2.9, 2.7, 2.2],
     # Set max size of a plane to a Boeing 747
@@ -22,20 +24,25 @@ dim_limits = {
     # Set max size of a helicopter to a CH-47
     "helicopter": [30.2, 3.8, 5.7],
     # Set max size of a rocket to a Saturn V
-    "rocket": [10.1, 10.1, 363.0]
+    "rocket": [10.1, 10.1, 363.0],
+    # Set max size of a submarine to an Ohio-class
+    "submarine": [170, 13, 10.8]
 }
 
 # Mass limits will be porportional to dimensions
 density_limits = {
-    # Rover denser than 150kg/m^3 would be weird
+    # Generic systems are arbitraily large
+    "system": [],
     # Mars rovers are at around 116.1kg/m^3
-    "rover": 150,
-    # TODO: plane density
-    "plane": lambda x, y, z: x * y * z,
-    # TODO: helicopter density
-    "helicopter": lambda x, y, z: x * y * z,
-    # TODO: rocket density
-    "rocket": lambda x, y, z: x * y * z
+    "rover": 125,
+    # MTOW density of a Boeing 747-8 is at about 13.1kg/m^3
+    "plane": 15,
+    # MTOW density of a CH-47 is around 37.5kg/m^3
+    "helicopter": 40,
+    # Density of a fully loaded Saturn V is at 80.1kg/m^3
+    "rocket": 85,
+    # Density of a submerged Ohio-class is at 785.6kg/m^3
+    "submarine": 800
 }
 
 
@@ -123,7 +130,7 @@ class Rover(PhysicalSystem):
         self.motor_locations.append([x, y, z, speed])
 
 
-# TODO: Class with helicopter-specific attributes
+# Class with helicopter-specific attributes
 class Helicopter(PhysicalSystem):
     rotor_locations = []  # Only control surface for helicopters are rotors
 
@@ -139,7 +146,7 @@ class Helicopter(PhysicalSystem):
         self.rotor_locations.append([x, y, z, thrust])
 
 
-# TODO: Class with plane-specific attributes
+# Class with plane-specific attributes
 class Plane(PhysicalSystem):
     engine_locations = []
     stall_speed = Decimal()  # Stall speed in level flight
@@ -155,7 +162,7 @@ class Plane(PhysicalSystem):
         self.engine_locations.append([x, y, z])
 
 
-# TODO: Class with rocket-specific attributes
+# Class with rocket-specific attributes
 class Rocket(PhysicalSystem):
     i_sp = Decimal()       # Specific impulse
     fuel_load = Decimal()  # Max propellant
@@ -163,3 +170,11 @@ class Rocket(PhysicalSystem):
 
     def __init__(self):
         super().__init__(system_type='rocket')
+
+
+# Class with submarine-specific attributes
+class Submarine(PhysicalSystem):
+    # TODO: implement
+
+    def __init__(self):
+        super().__init__(system_type='submarine')
