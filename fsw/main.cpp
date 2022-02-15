@@ -37,7 +37,9 @@ int main(int argc, char **argv) {
 
     cout << "Heading: {" << att_calculate_roll(next_pos) << ", " << att_calculate_pitch(next_pos)
          << ", " << att_calculate_yaw(next_pos) << "}" << endl;
+#ifdef SYS_IS_PLANE
     cout << "Throttle: " << att_calculate_throttle(next_pos) << endl;
+#endif
 
     servo_move(next_pos);
 

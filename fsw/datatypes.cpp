@@ -60,7 +60,7 @@ Quaternion Quaternion::operator*(Quaternion a) {
   a = a.conj();
   b = b.conj();
 #else
-  b = this;
+  b = *this;
 #endif
 
   ret.w = b.w * a.w - b.x * a.x - b.y * a.y - b.z * a.z;

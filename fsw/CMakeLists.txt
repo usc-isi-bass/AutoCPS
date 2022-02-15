@@ -51,4 +51,4 @@ add_executable(fsw main.cpp)
 
 set_property(TARGET fsw PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 
-target_link_libraries(fsw -static datatypes pos_ctrl att_ctrl servo_ctrl stub clock)
+target_link_libraries(fsw -static autocode datatypes pos_ctrl att_ctrl servo_ctrl stub clock)

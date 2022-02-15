@@ -5,14 +5,14 @@ import random
 from decimal import Decimal
 from sympy import *
 
-x, c_1, c_2 = symbols('x c_1 c_2')
+x_0, c_1, c_2 = symbols('x_0 c_1 c_2')
 v_0, v_1 = symbols('v_0 v_1')
 
 # A set of sigmoid functions to choose from
-sigmoids = [(c_2 + exp(-1 * x)) ** (-1 * c_1), 
-            c_1 * tanh(x) + c_2,
-            c_1 * atan(x) + c_2,
-            (c_1 * atan(x) + c_2) / c_1,]
+sigmoids = [(c_2 + exp(-1 * x_0)) ** (-1 * c_1), 
+            c_1 * tanh(x_0) + c_2,
+            c_1 * atan(x_0) + c_2,
+            (c_1 * atan(x_0) + c_2) / c_1,]
 
 # Dummy curve fitting equations
 curve_fitters = [v_0 * 360 / v_1,
@@ -21,7 +21,7 @@ curve_fitters = [v_0 * 360 / v_1,
                  (v_1 + v_0) / 100]
 
 # Different ways to calculate Pi
-pi_calculation = ['acos(-1.0',
+pi_calculation = ['acos(-1.0)',
                   '2 * asin(1.0)',
                   '4 * atan(1.0)',
                   '3.14159f']
@@ -98,14 +98,14 @@ class SoftwareSystem:
     def generate_s_curve_nav(self):
         self.sigmoid = random.choice(sigmoids)
 
-        derv = simplify(diff(self.sigmoid, x))
+        derv = simplify(diff(self.sigmoid, x_0))
 
         for var in ['x', 'y', 'z']:
             self.s_curve_calc += '  ret.' + var + ' = '
 
             # Replace a and x with required variables
             to_add = str(ccode(derv)).replace(
-                'x', var
+                'x_0', 'curr.{}'.format(var)
             ).replace(
                 'c_1', 'pos_autocode_s_curve_constant_{}_1'.format(var)
             ).replace(
@@ -132,7 +132,7 @@ class SoftwareSystem:
         for var in ['x', 'y', 'z']:
             # Replace a and x with required variables
             to_add = str(ccode(derv)).replace(
-                'x', 'pos_autocode_s_curve_constant_{}_1'.format(var)
+                'x_0', 'pos_autocode_s_curve_constant_{}_1'.format(var)
             ).replace(
                 'v_0', 'v_0.{}'.format(var)
             ).replace(

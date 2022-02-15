@@ -173,3 +173,5 @@ _deps
 *.out
 *.app
 
+# Autocoder output files
+output/
