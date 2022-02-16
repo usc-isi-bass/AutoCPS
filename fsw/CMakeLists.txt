@@ -1,12 +1,8 @@
 project(FakeFSW)
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.21)
 
 include(CheckIPOSupported)
 check_ipo_supported(RESULT supported OUTPUT error)
-
-# Try to inline some functions for more binary analysis fun
-set(CMAKE_C_FLAGS "-O3 -flto")
-set(CMAKE_CXX_FLAGS "-O3 -flto")
 
 add_library(datatypes STATIC datatypes.cpp)
 target_link_libraries(datatypes)

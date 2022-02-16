@@ -1,0 +1,43 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "clang-opt",
+      "displayName": "Clang Optimizations",
+      "description": "Clang build with optimizations",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_C_FLAGS": "-O3 -flto",
+        "CMAKE_CXX_FLAGS": "-O3 -flto"
+      }
+    },
+    {
+      "name": "clang-no-opt",
+      "displayName": "No Optimizations",
+      "description": "Default build without optimizations",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_C_FLAGS": "-O0",
+        "CMAKE_CXX_FLAGS": "-O0"
+      }
+    },
+    {
+      "name": "gcc-opt",
+      "displayName": "GCC Optimizations",
+      "description": "GCC build with optimizations",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_C_FLAGS": "-O3 -flto",
+        "CMAKE_CXX_FLAGS": "-O3 -flto"
+      }
+    }
+  ]
+}

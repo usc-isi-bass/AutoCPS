@@ -13,6 +13,11 @@ from physical_systems import Helicopter, Plane, Rocket, Rover, PhysicalSystem
 from software_systems import SoftwareSystem
 from code_generation import CodeGeneration
 
+# TODO: more compiler settings
+compile_config = dict(os.environ)
+compile_config['CC'] = 'clang'
+compile_config['CXX'] = 'clang++'
+
 parser = argparse.ArgumentParser(
     description='Generate all possible random FSWs.')
 
@@ -51,14 +56,31 @@ def main():
     shutil.copy(os.path.join('output', 'params.h'),
                 os.path.join(tempdir, 'fsw'))
 
-    print('Building CMake project...\n')
+    print('Building CMake projects...\n')
+    os.makedirs(os.path.join(tempdir, 'build-clang'))
+    os.makedirs(os.path.join(tempdir, 'build-no-opt'))
+    os.makedirs(os.path.join(tempdir, 'build-gcc'))
+
     subprocess.run([
-        'cmake', '-B{}'.format(os.path.join(tempdir, 'build')),
-        '-S{}'.format(os.path.join(tempdir, 'fsw'))
-    ])
-    subprocess.run(['make'], cwd=os.path.join(tempdir, 'build'))
+        'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
+        '--preset=clang-opt'
+    ],
+                   cwd=os.path.join(tempdir, 'build-clang'))
+    subprocess.run([
+        'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
+        '--preset=clang-no-opt'
+    ],
+                   cwd=os.path.join(tempdir, 'build-no-opt'))
+    subprocess.run([
+        'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
+        '--preset=gcc-opt'
+    ],
+                   cwd=os.path.join(tempdir, 'build-gcc'))
+
+    subprocess.run(['make'], cwd=os.path.join(tempdir, 'build-clang'))
+    subprocess.run(['make'], cwd=os.path.join(tempdir, 'build-no-opt'))
+    subprocess.run(['make'], cwd=os.path.join(tempdir, 'build-gcc'))
 
 
 if __name__ == "__main__":
     main()
-9
