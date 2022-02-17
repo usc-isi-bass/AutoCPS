@@ -1,22 +1,16 @@
 #!/usr/bin/env python3
 
-### Build all possible FSWs given a set of inputs
+# Build all possible FSWs given a set of inputs
 
 import argparse
+import json
 import tempfile
 import os
 import shutil
 import subprocess
-import sys
 
 from physical_systems import Helicopter, Plane, Rocket, Rover, PhysicalSystem
-from software_systems import SoftwareSystem
 from code_generation import CodeGeneration
-
-# TODO: more compiler settings
-compile_config = dict(os.environ)
-compile_config['CC'] = 'clang'
-compile_config['CXX'] = 'clang++'
 
 parser = argparse.ArgumentParser(
     description='Generate all possible random FSWs.')
@@ -56,30 +50,28 @@ def main():
     shutil.copy(os.path.join('output', 'params.h'),
                 os.path.join(tempdir, 'fsw'))
 
+    shutil.rmtree('output')
+
     print('Building CMake projects...\n')
-    os.makedirs(os.path.join(tempdir, 'build-clang'))
-    os.makedirs(os.path.join(tempdir, 'build-no-opt'))
-    os.makedirs(os.path.join(tempdir, 'build-gcc'))
 
-    subprocess.run([
-        'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
-        '--preset=clang-opt'
-    ],
-                   cwd=os.path.join(tempdir, 'build-clang'))
-    subprocess.run([
-        'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
-        '--preset=clang-no-opt'
-    ],
-                   cwd=os.path.join(tempdir, 'build-no-opt'))
-    subprocess.run([
-        'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
-        '--preset=gcc-opt'
-    ],
-                   cwd=os.path.join(tempdir, 'build-gcc'))
+    with open(os.path.join(tempdir, 'fsw', 'CMakePresets.json')) as preset_file:
+        cmake_presets = json.load(preset_file)
 
-    subprocess.run(['make'], cwd=os.path.join(tempdir, 'build-clang'))
-    subprocess.run(['make'], cwd=os.path.join(tempdir, 'build-no-opt'))
-    subprocess.run(['make'], cwd=os.path.join(tempdir, 'build-gcc'))
+        for preset in cmake_presets['configurePresets']:
+            print('Building CMake preset {}...\n'.format(preset['name']))
+            build_dir = os.path.join(tempdir,
+                                     'build-{}'.format(preset['name']))
+            os.mkdir(build_dir)
+
+            subprocess.run([
+                'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
+                '--preset={}'.format(preset['name'])
+            ],
+                           cwd=build_dir)
+
+            subprocess.run(['make'], cwd=build_dir)
+
+    print('\n\nProjects built!\n')
 
 
 if __name__ == "__main__":

@@ -96,8 +96,6 @@ class SoftwareSystem:
 
     # Generate a sigmoid curve to navigate with
     def generate_s_curve_nav(self):
-        self.sigmoid = random.choice(sigmoids)
-
         derv = simplify(diff(self.sigmoid, x_0))
 
         for var in ['x', 'y', 'z']:
