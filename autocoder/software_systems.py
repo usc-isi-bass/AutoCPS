@@ -9,10 +9,10 @@ x_0, c_1, c_2 = symbols('x_0 c_1 c_2')
 v_0, v_1 = symbols('v_0 v_1')
 
 # A set of sigmoid functions to choose from
-sigmoids = [(c_2 + exp(-1 * x_0)) ** (-1 * c_1), 
+sigmoids = [(c_2 + exp(-1 * x_0)) ** (-1 * c_1),
             c_1 * tanh(x_0) + c_2,
             c_1 * atan(x_0) + c_2,
-            (c_1 * atan(x_0) + c_2) / c_1,]
+            (c_1 * atan(x_0) + c_2) / c_1]
 
 # Dummy curve fitting equations
 curve_fitters = [v_0 * 360 / v_1,

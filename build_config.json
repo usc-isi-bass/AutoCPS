@@ -1,0 +1,24 @@
+{
+  "software" : {
+    "cycles_hz": [60, 120, 180],
+    "jpl_quaternion": [true, false],
+    "sigmoids": ["(c_2 + exp(-1 * x_0)) ** (-1 * c_1)",
+                 "c_1 * tanh(x_0) + c_2",
+                 "c_1 * atan(x_0) + c_2",
+                 "(c_1 * atan(x_0) + c_2) / c_1]"],
+    "curve_fitters": ["v_0 * 360 / v_1",
+                      "v_0 * v_1 ** 2",
+                      "v_1 ** 2 + 105",
+                      "(v_1 + v_0) / 100"],
+    "c_1_init": ["-1"],
+    "c_2_init": ["-1"],
+    "pi_calculation": ["acos(-1.0)",
+                       "2 * asin(1.0)",
+                       "4 * atan(1.0)",
+                       "3.14159f"],
+    "autonav_enable": [true, false],
+    "imu_enable": [true, false],
+    "kalman_enable": [true, false],
+    "sensor_enable": [true, false]
+  }
+}
