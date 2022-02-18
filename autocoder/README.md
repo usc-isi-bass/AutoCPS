@@ -24,5 +24,7 @@ The script will generate one root directory for each semantically different
 file, which will include the following files:
 
 *`config.json` - corresponding attributes used to generate the code
+
 *`fsw` - source files including autocoded bits for the FSW
+
 *`build-*` - build directories containing binaries for given compiler preset
