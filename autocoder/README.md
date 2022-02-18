@@ -19,3 +19,10 @@ file to generate different implementations of the FSW. The `build_config.json`
 file lists out different available settings for the FSW, which can be modified
 as needed. More compiler presets can also be added in the `CMakePresets.json`
 file, and `build_all.py` will automatically run them as needed.
+
+The script will generate one root directory for each semantically different
+file, which will include the following files:
+
+*`config.json` - corresponding attributes used to generate the code
+*`fsw` - source files including autocoded bits for the FSW
+*`build-*` - build directories containing binaries for given compiler preset
