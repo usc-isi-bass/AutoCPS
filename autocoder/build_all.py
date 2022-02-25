@@ -5,11 +5,12 @@
 import argparse
 import itertools
 import json
-import tempfile
 import os
 import shutil
 import subprocess
 import sympy
+import tempfile
+import threading
 
 from physical_systems import Helicopter, Plane, Rocket, Rover, PhysicalSystem
 from code_generation import CodeGeneration
@@ -17,75 +18,87 @@ from code_generation import CodeGeneration
 parser = argparse.ArgumentParser(
     description='Generate all possible random FSWs.')
 parser.add_argument("config_file", help="configuration file in JSON format")
+dirs_used = []
 
 
-# Run autocoder for one configuration
-def autocoder(config_entry):
-    # Create tempdir and copy base FSW code
-    tempdir = tempfile.mkdtemp(prefix='autocps_fsw.')
-    shutil.copytree('fsw', os.path.join(tempdir, 'fsw'))
+class AutocoderThread(threading.Thread):
+    config_entry = dict()
 
-    print('Building FSW in {} ...\n'.format(tempdir))
+    def __init__(self, config_entry):
+        threading.Thread.__init__(self)
+        self.config_entry = config_entry
 
-    with open(os.path.join(tempdir, 'config.json'), 'w') as config_file:
-        config_file.write(json.dumps(config_entry, indent=2))
+    # Run autocoder for one configuration
+    def run(self):
+        # Create tempdir and copy base FSW code
+        tempdir = tempfile.mkdtemp(prefix='autocps_fsw.')
+        shutil.copytree('fsw', os.path.join(tempdir, 'fsw'))
 
-    print(config_entry)
+        print('Building FSW in {} ...\n'.format(tempdir))
 
-    # Generate rover configs
-    physical_system = Rover()
-    physical_system.generate_dimensions()
-    physical_system.generate_software_system()
+        with open(os.path.join(tempdir, 'config.json'), 'w') as config_file:
+            config_file.write(json.dumps(self.config_entry, indent=2))
 
-    # Overwrite with config entry
-    physical_system.software.cycles_hz = config_entry['cycles_hz']
-    physical_system.software.jpl_quaternion = config_entry['jpl_quaternion']
-    physical_system.software.sigmoid = sympy.simplify(config_entry['sigmoids'])
-    physical_system.software.curve_fitter = sympy.simplify(config_entry['curve_fitters'])
-    physical_system.software.c_1_init = config_entry['c_1_init']
-    physical_system.software.c_2_init = config_entry['c_2_init']
-    physical_system.software.pi_calculation = config_entry['pi_calculation']
-    physical_system.software.autonav_enable = config_entry['autonav_enable']
-    physical_system.software.imu_enable = config_entry['imu_enable']
-    physical_system.software.kalman_enable = config_entry['kalman_enable']
-    physical_system.software.sensor_enable = config_entry['sensor_enable']
+        # Generate rover configs
+        physical_system = Rover()
+        physical_system.generate_dimensions()
+        physical_system.generate_software_system()
 
-    # Generate code
-    autocode = CodeGeneration()
-    autocode.generate(physical_system)
-    del autocode
+        # Overwrite with config entry
+        physical_system.software.cycles_hz = self.config_entry['cycles_hz']
+        physical_system.software.jpl_quaternion = self.config_entry['jpl_quaternion']
+        physical_system.software.sigmoid = sympy.simplify(self.config_entry['sigmoids'])
+        physical_system.software.curve_fitter = sympy.simplify(
+            self.config_entry['curve_fitters'])
+        physical_system.software.c_1_init = self.config_entry['c_1_init']
+        physical_system.software.c_2_init = self.config_entry['c_2_init']
+        physical_system.software.pi_calculation = self.config_entry['pi_calculation']
+        physical_system.software.autonav_enable = self.config_entry['autonav_enable']
+        physical_system.software.imu_enable = self.config_entry['imu_enable']
+        physical_system.software.kalman_enable = self.config_entry['kalman_enable']
+        physical_system.software.sensor_enable = self.config_entry['sensor_enable']
 
-    # Copy autocode over
-    shutil.copy(os.path.join('output', 'autocode.cpp'),
-                os.path.join(tempdir, 'fsw'))
-    shutil.copy(os.path.join('output', 'params.h'),
-                os.path.join(tempdir, 'fsw'))
+        # Generate code
+        autocode = CodeGeneration()
+        autocode.generate(physical_system)
+        del autocode
 
-    shutil.rmtree('output')
+        # Copy autocode over
+        shutil.copy(os.path.join('output', 'autocode.cpp'),
+                    os.path.join(tempdir, 'fsw'))
+        shutil.copy(os.path.join('output', 'params.h'),
+                    os.path.join(tempdir, 'fsw'))
 
-    print('Building CMake projects...\n')
+        shutil.rmtree('output')
 
-    with open(os.path.join(tempdir, 'fsw',
-                           'CMakePresets.json')) as preset_file:
-        cmake_presets = json.load(preset_file)
+        print('Building CMake projects...\n')
 
-        for preset in cmake_presets['configurePresets']:
-            print('Building CMake preset {}...\n'.format(preset['name']))
-            build_dir = os.path.join(tempdir,
-                                     'build-{}'.format(preset['name']))
-            os.mkdir(build_dir)
+        with open(os.path.join(tempdir, 'fsw',
+                               'CMakePresets.json')) as preset_file:
+            cmake_presets = json.load(preset_file)
 
-            subprocess.run([
-                'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
-                '--preset={}'.format(preset['name'])
-            ],
-                           cwd=build_dir)
+            for preset in cmake_presets['configurePresets']:
+                print('Building CMake preset {}...\n'.format(preset['name']))
+                build_dir = os.path.join(tempdir,
+                                         'build-{}'.format(preset['name']))
+                os.mkdir(build_dir)
 
-            subprocess.run(['make'], cwd=build_dir)
+                subprocess.run([
+                    'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
+                    '--preset={}'.format(preset['name'])
+                ],
+                               stdout=subprocess.DEVNULL,
+                               stderr=subprocess.DEVNULL,
+                               cwd=build_dir)
 
-    print('\n\nProjects built!\n')
+                subprocess.run(['make'],
+                               stdout=subprocess.DEVNULL,
+                               stderr=subprocess.DEVNULL,
+                               cwd=build_dir)
 
-    return tempdir
+        print('\n\nProjects built!\n')
+
+        dirs_used.append(tempdir)
 
 
 # Run autocoder for every combination of config elements
@@ -97,11 +110,17 @@ def main():
         build_config = json.load(config_file)
 
     # Create all possible permutations of configuration entries
-    dirs_used = []
+    threads = []
     for config_entry in (dict(zip(build_config['software'].keys(), values))
                          for values in itertools.product(
                              *build_config['software'].values())):
-        dirs_used.append(autocoder(config_entry))
+        threads.append(AutocoderThread(config_entry))
+
+    for t in threads:
+        t.start()
+
+    for t in threads:
+        t.join()
 
     # Print out all generated FSW directories
     print(dirs_used)
