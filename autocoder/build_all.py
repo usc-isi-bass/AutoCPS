@@ -23,10 +23,12 @@ dirs_used = []
 
 class AutocoderThread(threading.Thread):
     config_entry = dict()
+    build_number = -1
 
-    def __init__(self, config_entry):
+    def __init__(self, config_entry, build_number):
         threading.Thread.__init__(self)
         self.config_entry = config_entry
+        self.build_number = build_number
 
     # Run autocoder for one configuration
     def run(self):
@@ -34,7 +36,7 @@ class AutocoderThread(threading.Thread):
         tempdir = tempfile.mkdtemp(prefix='autocps_fsw.')
         shutil.copytree('fsw', os.path.join(tempdir, 'fsw'))
 
-        print('Building FSW in {} ...\n'.format(tempdir))
+        print('[{}] Building FSW in {} ...'.format(self.build_number, tempdir))
 
         with open(os.path.join(tempdir, 'config.json'), 'w') as config_file:
             config_file.write(json.dumps(self.config_entry, indent=2))
@@ -71,7 +73,7 @@ class AutocoderThread(threading.Thread):
 
         shutil.rmtree('output')
 
-        print('Building CMake projects...\n')
+        print('[{}] Building CMake projects...'.format(self.build_number))
 
         with open(os.path.join(tempdir, 'fsw',
                                'CMakePresets.json')) as preset_file:
@@ -96,7 +98,7 @@ class AutocoderThread(threading.Thread):
                                stderr=subprocess.DEVNULL,
                                cwd=build_dir)
 
-        print('\n\nProjects built!\n')
+        print('[{}] Projects built in {} !\n'.format(self.build_number, tempdir))
 
         dirs_used.append(tempdir)
 
@@ -111,10 +113,12 @@ def main():
 
     # Create all possible permutations of configuration entries
     threads = []
+    config_id = -1
     for config_entry in (dict(zip(build_config['software'].keys(), values))
                          for values in itertools.product(
                              *build_config['software'].values())):
-        threads.append(AutocoderThread(config_entry))
+        config_id += 1
+        threads.append(AutocoderThread(config_entry, config_id))
 
     for t in threads:
         t.start()
