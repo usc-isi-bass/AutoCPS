@@ -17,8 +17,7 @@ instructions can be found in [autocoder/README.md](autocoder/README.md).
 
 ## Flight Software
 
-More information on the FSW and more informative usage can be found in
-[fsw/README.md](fsw/README.md).
+More information on the FSW and can be found in [fsw/README.md](fsw/README.md).
 
 ## Requirements
 

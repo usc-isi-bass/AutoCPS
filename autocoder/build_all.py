@@ -61,28 +61,18 @@ class AutocoderThread(threading.Thread):
         physical_system.software.sensor_enable = self.config_entry['sensor_enable']
 
         # Generate code
-        output_temp_dir = os.path.join(tempdir, 'output')
-        print(output_temp_dir)
-        os.mkdir(output_temp_dir)
-
+        output_temp_dir = os.path.join(tempdir, 'fsw')
         autocode = CodeGeneration(output_dir=output_temp_dir)
         autocode.generate(physical_system)
         del autocode
 
-        # Copy autocode over
-        shutil.copy(os.path.join(output_temp_dir, 'autocode.cpp'),
-                    os.path.join(tempdir, 'fsw'))
-        shutil.copy(os.path.join(output_temp_dir, 'params.h'),
-                    os.path.join(tempdir, 'fsw'))
-
         print('[{}] Building CMake projects...'.format(self.build_number))
 
-        with open(os.path.join(tempdir, 'fsw',
-                               'CMakePresets.json')) as preset_file:
+        with open(os.path.join(output_temp_dir, 'CMakePresets.json')) as preset_file:
             cmake_presets = json.load(preset_file)
 
             for preset in cmake_presets['configurePresets']:
-                print('[{}] Building CMake preset {}...\n'.format(self.build_number, preset['name']))
+                print('[{}] Building CMake preset {}...'.format(self.build_number, preset['name']))
                 build_dir = os.path.join(tempdir,
                                          'build-{}'.format(preset['name']))
                 os.mkdir(build_dir)
@@ -100,7 +90,7 @@ class AutocoderThread(threading.Thread):
                                stderr=subprocess.DEVNULL,
                                cwd=build_dir)
 
-        print('[{}] Projects built in {} !\n'.format(self.build_number, tempdir))
+        print('[{}] Projects built in {} !'.format(self.build_number, tempdir))
 
         dirs_used.append(tempdir)
 
