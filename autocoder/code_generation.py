@@ -1,5 +1,6 @@
 import os
 
+
 # Base class to generate an autocoded params.h and autocode.o
 class CodeGeneration:
     # File objects to write to
@@ -7,8 +8,9 @@ class CodeGeneration:
     autocode_c = None
 
     # Initialize by opening files
-    def __init__(self):
-        output_dir = os.path.join(os.getcwd(), 'output')
+    def __init__(self, output_dir=-1):
+        if output_dir == -1:
+            output_dir = os.path.join(os.getcwd(), 'output')
 
         # Make output directory if needed
         try:
