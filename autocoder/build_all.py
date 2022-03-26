@@ -110,7 +110,9 @@ def main():
                          for values in itertools.product(
                              *build_config['software'].values())):
         config_id += 1
-        threads.append(AutocoderThread(config_entry, config_id))
+        if config_id == 769:
+            print(config_entry)
+            threads.append(AutocoderThread(config_entry, config_id))
 
     for t in threads:
         t.start()
