@@ -18,6 +18,7 @@ from code_generation import CodeGeneration
 parser = argparse.ArgumentParser(
     description='Generate all possible random FSWs.')
 parser.add_argument("config_file", help="configuration file in JSON format")
+parser.add_argument("--config_limit", type=int, help="Place a limit on the number of configurations to generate")
 dirs_used = []
 
 
@@ -98,6 +99,7 @@ class AutocoderThread(threading.Thread):
 # Run autocoder for every combination of config elements
 def main():
     args = parser.parse_args()
+    config_limit = args.config_limit
 
     build_config = {}
     with open(args.config_file) as config_file:
@@ -105,14 +107,12 @@ def main():
 
     # Create all possible permutations of configuration entries
     threads = []
-    config_id = -1
-    for config_entry in (dict(zip(build_config['software'].keys(), values))
+    for config_id, config_entry in enumerate((dict(zip(build_config['software'].keys(), values))
                          for values in itertools.product(
-                             *build_config['software'].values())):
-        config_id += 1
-        if config_id == 769:
-            print(config_entry)
-            threads.append(AutocoderThread(config_entry, config_id))
+                             *build_config['software'].values()))):
+        if config_limit is not None and config_id >= config_limit:
+            break
+        threads.append(AutocoderThread(config_entry, config_id))
 
     for t in threads:
         t.start()
