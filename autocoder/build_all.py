@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import sympy
 import tempfile
-import threading
+import multiprocessing
 
 from physical_systems import Helicopter, Plane, Rocket, Rover, PhysicalSystem
 from code_generation import CodeGeneration
@@ -19,15 +19,14 @@ parser = argparse.ArgumentParser(
     description='Generate all possible random FSWs.')
 parser.add_argument("config_file", help="configuration file in JSON format")
 parser.add_argument("--config_limit", type=int, help="Place a limit on the number of configurations to generate")
-dirs_used = []
+parser.add_argument("--workers", default=1, type=int, help="The number of processes to use when building.")
 
 
-class AutocoderThread(threading.Thread):
+class AutocoderWorker:
     config_entry = dict()
     build_number = -1
 
     def __init__(self, config_entry, build_number):
-        threading.Thread.__init__(self)
         self.config_entry = config_entry
         self.build_number = build_number
 
@@ -93,32 +92,39 @@ class AutocoderThread(threading.Thread):
 
         print('[{}] Projects built in {} !'.format(self.build_number, tempdir))
 
-        dirs_used.append(tempdir)
+        return tempdir
+
+def run_worker(args):
+    config_entry, config_id = args
+    worker = AutocoderWorker(config_entry, config_id)
+    return worker.run()
 
 
 # Run autocoder for every combination of config elements
 def main():
     args = parser.parse_args()
     config_limit = args.config_limit
+    nworkers = args.workers
 
     build_config = {}
     with open(args.config_file) as config_file:
         build_config = json.load(config_file)
 
     # Create all possible permutations of configuration entries
-    threads = []
+    configs = []
     for config_id, config_entry in enumerate((dict(zip(build_config['software'].keys(), values))
                          for values in itertools.product(
                              *build_config['software'].values()))):
         if config_limit is not None and config_id >= config_limit:
             break
-        threads.append(AutocoderThread(config_entry, config_id))
+        configs.append((config_entry, config_id))
 
-    for t in threads:
-        t.start()
-
-    for t in threads:
-        t.join()
+    dirs_used = []
+    num_configs = len(configs)
+    with multiprocessing.Pool(nworkers) as pool:
+        for i, dir_used in enumerate(pool.imap_unordered(run_worker, configs)):
+            print("COMPLETED: {}/{}".format(i + 1, num_configs))
+            dirs_used.append(dir_used)
 
     # Print out all generated FSW directories
     print(dirs_used)
