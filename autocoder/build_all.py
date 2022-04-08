@@ -67,6 +67,7 @@ class AutocoderWorker:
         del autocode
 
         print('[{}] Building CMake projects...'.format(self.build_number))
+        report = AutocoderWorkerReport(tempdir)
 
         with open(os.path.join(output_temp_dir, 'CMakePresets.json')) as preset_file:
             cmake_presets = json.load(preset_file)
@@ -77,22 +78,39 @@ class AutocoderWorker:
                                          'build-{}'.format(preset['name']))
                 os.mkdir(build_dir)
 
-                subprocess.run([
+                p = subprocess.run([
                     'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
                     '--preset={}'.format(preset['name'])
                 ],
                                stdout=subprocess.DEVNULL,
-                               stderr=subprocess.DEVNULL,
+                               stderr=subprocess.PIPE,
                                cwd=build_dir)
+                if p.returncode != 0:
+                    report.set_cmake_err(stderr.read())
 
-                subprocess.run(['make'],
+                p = subprocess.run(['make'],
                                stdout=subprocess.DEVNULL,
-                               stderr=subprocess.DEVNULL,
+                               stderr=subprocess.PIPE,
                                cwd=build_dir)
+                if p.returncode != 0:
+                    report.set_make_err(stderr.read())
 
         print('[{}] Projects built in {} !'.format(self.build_number, tempdir))
 
-        return tempdir
+        return report
+class AutocoderWorkerReport:
+
+    def __init__(self, dir_used):
+        self.dir_used = dir_used
+        self.cmake_err = None
+        self.make_err = None
+
+    def set_cmake_err(self, err):
+        self.cmake_err = err
+
+    def set_make_err(self, err):
+        self.make_err = err
+
 
 def run_worker(args):
     config_entry, config_id = args
@@ -119,15 +137,26 @@ def main():
             break
         configs.append((config_entry, config_id))
 
-    dirs_used = []
+    reports = []
     num_configs = len(configs)
     with multiprocessing.Pool(nworkers) as pool:
         for i, dir_used in enumerate(pool.imap_unordered(run_worker, configs)):
             print("COMPLETED: {}/{}".format(i + 1, num_configs))
-            dirs_used.append(dir_used)
+            reports.append(dir_used)
 
-    # Print out all generated FSW directories
-    print(dirs_used)
+    err_reports = []
+    print("Build directories:")
+    for report in reports:
+        print(report.dir_used)
+        if report.cmake_err is not None or report.make_err is not None:
+            err_reports.append(report)
+    if len(err_reports) > 0:
+        print("Build errors:")
+        for report in err_reports:
+            print("DIR: {}".format(report.dir_used))
+            print("  cmake: {}".format(report.cmake_err))
+            print("  make: {}".format(report.make_err))
+
 
 
 if __name__ == "__main__":
