@@ -19,6 +19,7 @@ parser = argparse.ArgumentParser(
     description='Generate all possible random FSWs.')
 parser.add_argument("config_file", help="configuration file in JSON format")
 parser.add_argument("--config_limit", type=int, help="Place a limit on the number of configurations to generate", default=5)
+parser.add_argument("--root", help="The directory in which to store the built configurations.", default=tempfile.gettempdir())
 dirs_used = []
 
 
@@ -26,15 +27,16 @@ class AutocoderThread(threading.Thread):
     config_entry = dict()
     build_number = -1
 
-    def __init__(self, config_entry, build_number):
+    def __init__(self, config_entry, build_number, build_root):
         threading.Thread.__init__(self)
         self.config_entry = config_entry
         self.build_number = build_number
+        self.build_root = build_root
 
     # Run autocoder for one configuration
     def run(self):
         # Create tempdir and copy base FSW code
-        tempdir = tempfile.mkdtemp(prefix='autocps_fsw.')
+        tempdir = tempfile.mkdtemp(prefix='autocps_fsw.', dir=self.build_root)
         shutil.copytree('fsw', os.path.join(tempdir, 'fsw'))
 
         print('[{}] Building FSW in {} ...'.format(self.build_number, tempdir))
@@ -100,6 +102,7 @@ class AutocoderThread(threading.Thread):
 def main():
     args = parser.parse_args()
     config_limit = args.config_limit
+    build_root = args.root
 
     build_config = {}
     with open(args.config_file) as config_file:
@@ -112,7 +115,7 @@ def main():
                              *build_config['software'].values()))):
         if config_limit is not None and config_id >= config_limit:
             break
-        threads.append(AutocoderThread(config_entry, config_id))
+        threads.append(AutocoderThread(config_entry, config_id, build_root))
 
     for t in threads:
         t.start()
