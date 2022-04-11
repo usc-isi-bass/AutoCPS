@@ -1,5 +1,5 @@
 project(FakeFSW)
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.19)
 
 include(CheckIPOSupported)
 check_ipo_supported(RESULT supported OUTPUT error)
