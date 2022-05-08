@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutocpsKsp", "AutocpsKsp\AutocpsKsp.csproj", "{DCF60656-227B-43F5-95BC-0A7128076462}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCF60656-227B-43F5-95BC-0A7128076462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF60656-227B-43F5-95BC-0A7128076462}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF60656-227B-43F5-95BC-0A7128076462}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF60656-227B-43F5-95BC-0A7128076462}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -74,8 +74,7 @@ class AutocoderThread(threading.Thread):
 
             for preset in cmake_presets['configurePresets']:
                 print('[{}] Building CMake preset {}...'.format(self.build_number, preset['name']))
-                build_dir = os.path.join(tempdir,
-                                         'build-{}'.format(preset['name']))
+                build_dir = os.path.join(tempdir, 'build-{}'.format(preset['name']))
                 os.mkdir(build_dir)
 
                 subprocess.run([
