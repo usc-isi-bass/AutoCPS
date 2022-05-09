@@ -18,7 +18,7 @@ from code_generation import CodeGeneration
 parser = argparse.ArgumentParser(
     description='Generate all possible random FSWs.')
 parser.add_argument("config_file", help="configuration file in JSON format")
-parser.add_argument("--config_limit", type=int, help="Place a limit on the number of configurations to generate", default=5)
+parser.add_argument("--config-limit", type=int, help="Place a limit on the number of configurations to generate", default=5)
 dirs_used = []
 
 
