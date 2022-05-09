@@ -86,14 +86,14 @@ class AutocoderWorker:
                                stderr=subprocess.PIPE,
                                cwd=build_dir)
                 if p.returncode != 0:
-                    report.set_cmake_err(stderr.read())
+                    report.set_cmake_err(p.stderr)
 
                 p = subprocess.run(['make'],
                                stdout=subprocess.DEVNULL,
                                stderr=subprocess.PIPE,
                                cwd=build_dir)
                 if p.returncode != 0:
-                    report.set_make_err(stderr.read())
+                    report.set_make_err(p.stderr)
 
         print('[{}] Projects built in {} !'.format(self.build_number, tempdir))
 
