@@ -151,7 +151,7 @@ def main():
         if report.cmake_err is not None or report.make_err is not None:
             err_reports.append(report)
     if len(err_reports) > 0:
-        print("Build errors:")
+        print("Build errors: ({})".format(len(err_reports)))
         for report in err_reports:
             print("DIR: {}".format(report.dir_used))
             print("  cmake: {}".format(report.cmake_err))
