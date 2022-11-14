@@ -11,6 +11,7 @@ import subprocess
 import sympy
 import tempfile
 import multiprocessing
+import random
 
 from physical_systems import Helicopter, Plane, Rocket, Rover, PhysicalSystem
 from code_generation import CodeGeneration
@@ -20,6 +21,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument("config_file", help="configuration file in JSON format")
 parser.add_argument("--config_limit", type=int, help="Place a limit on the number of configurations to generate")
 parser.add_argument("--workers", default=1, type=int, help="The number of processes to use when building.")
+parser.add_argument("--seed", default='', help="The seed for shuffling the created configurations.")
 
 
 class AutocoderWorker:
@@ -43,8 +45,6 @@ class AutocoderWorker:
 
         # Generate rover configs
         physical_system = Rover()
-        physical_system.generate_dimensions()
-        physical_system.generate_software_system()
 
         # Overwrite with config entry
         physical_system.software.cycles_hz = self.config_entry['cycles_hz']
@@ -59,6 +59,9 @@ class AutocoderWorker:
         physical_system.software.imu_enable = self.config_entry['imu_enable']
         physical_system.software.kalman_enable = self.config_entry['kalman_enable']
         physical_system.software.sensor_enable = self.config_entry['sensor_enable']
+
+        physical_system.generate_dimensions()
+        physical_system.generate_software_system()
 
         # Generate code
         output_temp_dir = os.path.join(tempdir, 'fsw')
@@ -123,6 +126,8 @@ def main():
     args = parser.parse_args()
     config_limit = args.config_limit
     nworkers = args.workers
+    r = random.Random()
+    r.seed(args.seed)
 
     build_config = {}
     with open(args.config_file) as config_file:
@@ -130,10 +135,12 @@ def main():
 
     # Create all possible permutations of configuration entries
     configs = []
-    for config_id, config_entry in enumerate((dict(zip(build_config['software'].keys(), values))
+    config_list = list(enumerate((dict(zip(build_config['software'].keys(), values))
                          for values in itertools.product(
-                             *build_config['software'].values()))):
-        if config_limit is not None and config_id >= config_limit:
+                             *build_config['software'].values()))))
+    r.shuffle(config_list)
+    for i, (config_id, config_entry) in enumerate(config_list):
+        if config_limit is not None and i >= config_limit:
             break
         configs.append((config_entry, config_id))
 
