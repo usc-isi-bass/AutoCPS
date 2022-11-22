@@ -155,8 +155,27 @@ class CodeGeneration:
         self.autocode_c.write('double pos_autocode_s_curve_constant_z_1 = {};\n'.format(system.software.c_1_init))
         self.autocode_c.write('double pos_autocode_s_curve_constant_z_2 = {};\n\n'.format(system.software.c_2_init))
 
-        self.autocode_c.write('void seq_autocode_fit_s_curve(std::deque<SeqWaypoint> target) {\n')
+        self.autocode_c.write('__attribute__((noinline)) double curve_fit_calc(double v_0, double v_1) {\n')
         self.autocode_c.write(system.software.curve_fit_calc)
+        self.autocode_c.write('}\n\n')
+        self.autocode_c.write('void seq_autocode_fit_s_curve(std::deque<SeqWaypoint> target) {\n')
+        self.autocode_c.write( '  Vec3D v_0, v_1;\n')
+        self.autocode_c.write( '  if (target.size() == 0) {\n')
+        self.autocode_c.write( '    return;\n')
+        self.autocode_c.write( '  } else if (target.size() > 1) {\n')
+        self.autocode_c.write( '    v_0 = target[0].position;\n')
+        self.autocode_c.write( '    v_1 = target[1].position;\n')
+        self.autocode_c.write( '  } else if (target.size() == 1) {\n')
+        self.autocode_c.write( '    v_0 = target[0].position;\n')
+        self.autocode_c.write( '    v_1 = v_0;\n')
+        self.autocode_c.write( '  }\n\n')
+        for var in ['x', 'y', 'z']:
+            # Replace a and x with required variables
+            self.autocode_c.write('  pos_autocode_s_curve_constant_' + var + '_1 = ')
+            self.autocode_c.write('curve_fit_calc(v_0.{}'.format(var) + ',v_1.{}'.format(var)+');\n')
+
+            self.autocode_c.write('  pos_autocode_s_curve_constant_' + var + '_2 = ')
+            self.autocode_c.write('curve_fit_calc(v_0.{}'.format(var) + ',v_1.{}'.format(var)+');\n')
         self.autocode_c.write('}\n\n')
 
         self.autocode_c.write('Vec3D pos_autocode_s_curve_derivative(Vec3D curr,\n'

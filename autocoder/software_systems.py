@@ -115,30 +115,5 @@ class SoftwareSystem:
     # Make a curve fitter
     def generate_curve_fitter(self):
         derv = simplify(self.curve_fitter)
-
-        self.curve_fit_calc += '  Vec3D v_0, v_1;\n'
-        self.curve_fit_calc += '  if (target.size() == 0) {\n'
-        self.curve_fit_calc += '    return;\n'
-        self.curve_fit_calc += '  } else if (target.size() > 1) {\n'
-        self.curve_fit_calc += '    v_0 = target[0].position;\n'
-        self.curve_fit_calc += '    v_1 = target[1].position;\n'
-        self.curve_fit_calc += '  } else if (target.size() == 1) {\n'
-        self.curve_fit_calc += '    v_0 = target[0].position;\n'
-        self.curve_fit_calc += '    v_1 = v_0;\n'
-        self.curve_fit_calc += '  }\n\n'
-
-        for var in ['x', 'y', 'z']:
-            # Replace a and x with required variables
-            to_add = str(ccode(derv)).replace(
-                'x_0', 'pos_autocode_s_curve_constant_{}_1'.format(var)
-            ).replace(
-                'v_0', 'v_0.{}'.format(var)
-            ).replace(
-                'v_1', 'v_1.{}'.format(var)
-            )
-
-            self.curve_fit_calc += '  pos_autocode_s_curve_constant_' + var + '_1 = '
-            self.curve_fit_calc += to_add + ';\n'
-
-            self.curve_fit_calc += '  pos_autocode_s_curve_constant_' + var + '_2 = '
-            self.curve_fit_calc += to_add + ';\n'
+        self.curve_fit_calc += "  return "+str(ccode(derv))+"\n;"
+       
