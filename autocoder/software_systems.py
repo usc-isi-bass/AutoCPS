@@ -93,6 +93,7 @@ class SoftwareSystem:
         if self.system_type == 'plane':
             self.max_speed_calc += '  double stall_speed = STALL_SPEED / sqrt(cos(direction_euler.x));\n'
             self.max_speed_calc += '  if (stall_speed > max_speed) return stall_speed;\n'
+        self.max_speed_calc += '  return max_speed;\n'
 
     # Generate a sigmoid curve to navigate with
     def generate_s_curve_nav(self):
