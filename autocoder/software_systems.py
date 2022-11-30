@@ -97,23 +97,10 @@ class SoftwareSystem:
     # Generate a sigmoid curve to navigate with
     def generate_s_curve_nav(self):
         derv = simplify(diff(self.sigmoid, x_0))
-
-        for var in ['x', 'y', 'z']:
-            self.s_curve_calc += '  ret.' + var + ' = '
-
-            # Replace a and x with required variables
-            to_add = str(ccode(derv)).replace(
-                'x_0', 'curr.{}'.format(var)
-            ).replace(
-                'c_1', 'pos_autocode_s_curve_constant_{}_1'.format(var)
-            ).replace(
-                'c_2', 'pos_autocode_s_curve_constant_{}_2'.format(var)
-            )
-
-            self.s_curve_calc += to_add + ';\n'
+        self.s_curve_calc += "  return "+str(ccode(derv))+";\n"
 
     # Make a curve fitter
     def generate_curve_fitter(self):
         derv = simplify(self.curve_fitter)
-        self.curve_fit_calc += "  return "+str(ccode(derv))+"\n;"
+        self.curve_fit_calc += "  return "+str(ccode(derv))+";\n"
        
