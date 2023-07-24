@@ -10,7 +10,8 @@ import shutil
 import subprocess
 import sympy
 import tempfile
-import threading
+import multiprocessing
+import random
 
 from physical_systems import Helicopter, Plane, Rocket, Rover, PhysicalSystem
 from code_generation import CodeGeneration
@@ -18,16 +19,16 @@ from code_generation import CodeGeneration
 parser = argparse.ArgumentParser(
     description='Generate all possible random FSWs.')
 parser.add_argument("config_file", help="configuration file in JSON format")
-parser.add_argument("--config_limit", type=int, help="Place a limit on the number of configurations to generate", default=5)
-dirs_used = []
+parser.add_argument("--config_limit", type=int, help="Place a limit on the number of configurations to generate")
+parser.add_argument("--workers", default=1, type=int, help="The number of processes to use when building.")
+parser.add_argument("--seed", default='', help="The seed for shuffling the created configurations.")
 
 
-class AutocoderThread(threading.Thread):
+class AutocoderWorker:
     config_entry = dict()
     build_number = -1
 
     def __init__(self, config_entry, build_number):
-        threading.Thread.__init__(self)
         self.config_entry = config_entry
         self.build_number = build_number
 
@@ -44,8 +45,6 @@ class AutocoderThread(threading.Thread):
 
         # Generate rover configs
         physical_system = Rover()
-        physical_system.generate_dimensions()
-        physical_system.generate_software_system()
 
         # Overwrite with config entry
         physical_system.software.cycles_hz = self.config_entry['cycles_hz']
@@ -61,6 +60,9 @@ class AutocoderThread(threading.Thread):
         physical_system.software.kalman_enable = self.config_entry['kalman_enable']
         physical_system.software.sensor_enable = self.config_entry['sensor_enable']
 
+        physical_system.generate_dimensions()
+        physical_system.generate_software_system()
+
         # Generate code
         output_temp_dir = os.path.join(tempdir, 'fsw')
         autocode = CodeGeneration(output_dir=output_temp_dir)
@@ -68,6 +70,7 @@ class AutocoderThread(threading.Thread):
         del autocode
 
         print('[{}] Building CMake projects...'.format(self.build_number))
+        report = AutocoderWorkerReport(tempdir)
 
         with open(os.path.join(output_temp_dir, 'CMakePresets.json')) as preset_file:
             cmake_presets = json.load(preset_file)
@@ -78,50 +81,89 @@ class AutocoderThread(threading.Thread):
                                          'build-{}'.format(preset['name']))
                 os.mkdir(build_dir)
 
-                subprocess.run([
+                p = subprocess.run([
                     'cmake', '-S{}'.format(os.path.join(tempdir, 'fsw')),
                     '--preset={}'.format(preset['name'])
                 ],
                                stdout=subprocess.DEVNULL,
-                               stderr=subprocess.DEVNULL,
+                               stderr=subprocess.PIPE,
                                cwd=build_dir)
+                if p.returncode != 0:
+                    report.set_cmake_err(p.stderr)
 
-                subprocess.run(['make'],
+                p = subprocess.run(['make'],
                                stdout=subprocess.DEVNULL,
-                               stderr=subprocess.DEVNULL,
+                               stderr=subprocess.PIPE,
                                cwd=build_dir)
+                if p.returncode != 0:
+                    report.set_make_err(p.stderr)
 
         print('[{}] Projects built in {} !'.format(self.build_number, tempdir))
 
-        dirs_used.append(tempdir)
+        return report
+class AutocoderWorkerReport:
+
+    def __init__(self, dir_used):
+        self.dir_used = dir_used
+        self.cmake_err = None
+        self.make_err = None
+
+    def set_cmake_err(self, err):
+        self.cmake_err = err
+
+    def set_make_err(self, err):
+        self.make_err = err
+
+
+def run_worker(args):
+    config_entry, config_id = args
+    worker = AutocoderWorker(config_entry, config_id)
+    return worker.run()
 
 
 # Run autocoder for every combination of config elements
 def main():
     args = parser.parse_args()
     config_limit = args.config_limit
+    nworkers = args.workers
+    r = random.Random()
+    r.seed(args.seed)
 
     build_config = {}
     with open(args.config_file) as config_file:
         build_config = json.load(config_file)
 
     # Create all possible permutations of configuration entries
-    threads = []
-    for config_id, config_entry in enumerate((dict(zip(build_config['software'].keys(), values))
+    configs = []
+    config_list = list(enumerate((dict(zip(build_config['software'].keys(), values))
                          for values in itertools.product(
-                             *build_config['software'].values()))):
-        if config_limit is not None and config_id >= config_limit:
+                             *build_config['software'].values()))))
+    r.shuffle(config_list)
+    for i, (config_id, config_entry) in enumerate(config_list):
+        if config_limit is not None and i >= config_limit:
             break
-        threads.append(AutocoderThread(config_entry, config_id))
+        configs.append((config_entry, config_id))
 
-    for t in threads:
-        t.start()
+    reports = []
+    num_configs = len(configs)
+    with multiprocessing.Pool(nworkers) as pool:
+        for i, dir_used in enumerate(pool.imap_unordered(run_worker, configs)):
+            print("COMPLETED: {}/{}".format(i + 1, num_configs))
+            reports.append(dir_used)
 
-    for t in threads:
-        t.join()
+    err_reports = []
+    print("Build directories:")
+    for report in reports:
+        print(report.dir_used)
+        if report.cmake_err is not None or report.make_err is not None:
+            err_reports.append(report)
+    if len(err_reports) > 0:
+        print("Build errors: ({})".format(len(err_reports)))
+        for report in err_reports:
+            print("DIR: {}".format(report.dir_used))
+            print("  cmake: {}".format(report.cmake_err))
+            print("  make: {}".format(report.make_err))
 
-    # Print out all generated FSW directories
-    print(dirs_used)
 
 
 if __name__ == "__main__":
