@@ -189,7 +189,6 @@ class CodeGeneration:
             self.autocode_c.write(' ret.' + var + '= ')
             self.autocode_c.write('s_curve_calc(curr.{}'.format(var)+ ', pos_autocode_s_curve_constant_{}_1'.format(var))
             self.autocode_c.write(', pos_autocode_s_curve_constant_{}_2'.format(var)+');\n')
-        self.autocode_c.write(system.software.s_curve_calc + '\n')
         self.autocode_c.write('  normalize(ret);\n\n')
         self.autocode_c.write('  return ret;\n')
         self.autocode_c.write('}\n\n')
