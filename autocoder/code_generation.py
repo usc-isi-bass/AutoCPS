@@ -57,10 +57,10 @@ class CodeGeneration:
         if system.software.jpl_quaternion is True:
             self.params_h.write('#define JPL_QUATERNION\n\n')
 
-        self.params_h.write('#define AUTONAV_ENABLE {}\n'.format(system.software.autonav_enable))
-        self.params_h.write('#define IMU_ENABLE {}\n'.format(system.software.imu_enable))
-        self.params_h.write('#define KALMAN_ENABLE {}\n'.format(system.software.kalman_enable))
-        self.params_h.write('#define SENSOR_ENABLE {}\n\n'.format(system.software.sensor_enable))
+        self.params_h.write('#define AUTONAV_ENABLE {}\n'.format(str(system.software.autonav_enable).lower()))
+        self.params_h.write('#define IMU_ENABLE {}\n'.format(str(system.software.imu_enable).lower()))
+        self.params_h.write('#define KALMAN_ENABLE {}\n'.format(str(system.software.kalman_enable).lower()))
+        self.params_h.write('#define SENSOR_ENABLE {}\n\n'.format(str(system.software.sensor_enable).lower()))
 
         self.params_h.write('#define POS_MAX_ERROR ' + system.software.pi_calculation + '\n')
         self.params_h.write('#define SYS_PI ' + system.software.pi_calculation + '\n')
@@ -189,7 +189,6 @@ class CodeGeneration:
             self.autocode_c.write(' ret.' + var + '= ')
             self.autocode_c.write('s_curve_calc(curr.{}'.format(var)+ ', pos_autocode_s_curve_constant_{}_1'.format(var))
             self.autocode_c.write(', pos_autocode_s_curve_constant_{}_2'.format(var)+');\n')
-        self.autocode_c.write(system.software.s_curve_calc + '\n')
         self.autocode_c.write('  normalize(ret);\n\n')
         self.autocode_c.write('  return ret;\n')
         self.autocode_c.write('}\n\n')
